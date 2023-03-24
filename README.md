@@ -1,7 +1,7 @@
-## Titomachine is a TTK-91 Emulator
+## Vihannes is a NES Emulator
 
-Because my programs were too much for [Titokone](https://www.cs.helsinki.fi/group/titokone/).
+Trying to learn how these things work, what better way than to make an emulator?
 
-![image](https://user-images.githubusercontent.com/100710152/218274322-0004823f-8435-48dd-aab8-73447b5d2580.png)
+In it's current state it is unable to run any real games. I need figure out interrupts, and then how am I going to deal with vblank interrupt since this is the opposite of cycle accurate.
 
-[Language reference](https://www.cs.helsinki.fi/group/titokone/ttk91_ref_en.html)
+![Screenshot from 2023-03-24 18-38-00](https://user-images.githubusercontent.com/100710152/227588891-53c70397-75f9-4d90-8dd2-89c743ff761e.png)
