@@ -1,0 +1,12 @@
+[package]
+name = "nesmachine-gui"
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+nesmc-disassembler = { workspace = true }
+nesmc-emu = { workspace = true }
+
+eframe = "0.31.1"
+egui = "0.31.1"
+egui_extras = "0.31.1"

@@ -1,0 +1,7 @@
+[package]
+name = "nesmc-emu"
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+nesmc-types = { workspace = true }

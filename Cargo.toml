@@ -1,6 +1,20 @@
-[package]
-name = "nesmachine"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+resolver = "2"
+members = [
+    # bin
+    "crates/nesmachine-gui",
 
-[dependencies]
+    # lib
+    "crates/nesmc-disassembler",
+    "crates/nesmc-emu",
+    "crates/nesmc-types",
+]
+
+[workspace.dependencies]
+nesmc-disassembler = { path = "crates/nesmc-disassembler" }
+nesmc-emu = { path = "crates/nesmc-emu" }
+nesmc-types = { path = "crates/nesmc-types" }
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
