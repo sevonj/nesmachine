@@ -18,11 +18,11 @@ impl Default for IRam {
 }
 
 impl Device for IRam {
-    fn read(&self, addr: usize) -> u8 {
-        self.0[addr % Self::SIZE]
+    fn read(&self, addr: u16) -> u8 {
+        self.0[addr as usize % Self::SIZE]
     }
 
-    fn write(&mut self, addr: usize, value: u8) {
-        self.0[addr % Self::SIZE] = value;
+    fn write(&mut self, addr: u16, value: u8) {
+        self.0[addr as usize % Self::SIZE] = value;
     }
 }

@@ -11,8 +11,8 @@ pub use mapper::Mapper;
 pub use ppu::PPU;
 
 pub trait Device {
-    fn read(&self, addr: usize) -> u8;
-    fn write(&mut self, addr: usize, value: u8);
+    fn read(&self, addr: u16) -> u8;
+    fn write(&mut self, addr: u16, value: u8);
 
     // /// Reset button behavior
     // fn reset(&mut self);
@@ -30,28 +30,28 @@ pub struct Bus {
 impl Bus {
     pub fn read(&self, addr: u16) -> u8 {
         match addr {
-            0x0000..=0x1fff => self.iram.read(addr as usize),
-            0x2000..=0x3fff => self.ppu.read(addr as usize),
-            0x4000..=0x4013 => self.apu.read(addr as usize),
+            0x0000..=0x1fff => self.iram.read(addr),
+            0x2000..=0x3fff => self.ppu.read(addr),
+            0x4000..=0x4013 => self.apu.read(addr),
             0x4014 => 0,
-            0x4015 => self.apu.read(addr as usize),
-            0x4016..=0x4017 => self.input.read(addr as usize),
+            0x4015 => self.apu.read(addr),
+            0x4016..=0x4017 => self.input.read(addr),
             0x4018..=0x401f => 0,
-            0x4020..=0xffff => self.cart.read(addr as usize),
+            0x4020..=0xffff => self.cart.read(addr),
         }
     }
 
     pub fn write(&mut self, addr: u16, value: u8) {
         match addr {
-            0x0000..=0x1fff => self.iram.write(addr as usize, value),
-            0x2000..=0x3fff => self.ppu.write(addr as usize, value),
-            0x4000..=0x4013 => self.apu.write(addr as usize, value),
+            0x0000..=0x1fff => self.iram.write(addr, value),
+            0x2000..=0x3fff => self.ppu.write(addr, value),
+            0x4000..=0x4013 => self.apu.write(addr, value),
             0x4014 => (), // TODO: OAM DMA
-            0x4015 => self.apu.write(addr as usize, value),
-            0x4016 => self.input.write(addr as usize, value),
-            0x4017 => self.apu.write(addr as usize, value),
+            0x4015 => self.apu.write(addr, value),
+            0x4016 => self.input.write(addr, value),
+            0x4017 => self.apu.write(addr, value),
             0x4018..=0x401f => (),
-            0x4020..=0xffff => self.cart.write(addr as usize, value),
+            0x4020..=0xffff => self.cart.write(addr, value),
         }
     }
 }

@@ -59,8 +59,8 @@ impl INesHeader {
 }
 
 pub trait MapperIo {
-    fn read(&self, addr: usize) -> u8;
-    fn write(&mut self, addr: usize, value: u8);
+    fn read(&self, addr: u16) -> u8;
+    fn write(&mut self, addr: u16, value: u8);
 }
 
 #[derive(Debug, Default)]
@@ -71,14 +71,14 @@ pub enum Mapper {
 }
 
 impl Device for Mapper {
-    fn read(&self, addr: usize) -> u8 {
+    fn read(&self, addr: u16) -> u8 {
         match self {
             Mapper::None => 0,
             Mapper::MMC1(mmc1) => mmc1.read(addr),
         }
     }
 
-    fn write(&mut self, addr: usize, value: u8) {
+    fn write(&mut self, addr: u16, value: u8) {
         match self {
             Mapper::None => (),
             Mapper::MMC1(mmc1) => mmc1.write(addr, value),

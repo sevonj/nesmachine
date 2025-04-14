@@ -1,7 +1,9 @@
 mod mem_browser;
+mod menu_bar;
 
-use egui::Context;
+use egui::{CentralPanel, Context};
 use mem_browser::MemBrowser;
+use menu_bar::MenuBar;
 use nesmc_emu::NesMachine;
 
 #[derive(Default)]
@@ -11,10 +13,9 @@ pub struct EmuUi {
 
 impl EmuUi {
     pub fn draw(&mut self, ctx: &Context, machine: &mut NesMachine) {
-        //egui::TopBottomPanel::bottom("bottom").show(ctx, |ui|{
-        //    ui.allocate_space(vec2(5., 300.));
-        //});
-        egui::CentralPanel::default().show(ctx, |ui| {
+        MenuBar::new(machine).show(ctx);
+
+        CentralPanel::default().show(ctx, |ui| {
             self.mem_browser.draw(ui, &mut machine.bus);
         });
     }
