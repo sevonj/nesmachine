@@ -16,8 +16,8 @@ use super::Device;
 
 #[derive(Debug)]
 pub struct INesHeader {
-    _len_prg_rom: u8,
-    _len_chr_rom: u8,
+    len_prg_rom: usize,
+    len_chr_rom: usize,
     mapper_id: u8,
 }
 
@@ -32,8 +32,8 @@ impl INesHeader {
             return Err(NesMachineError::FileInvalidSig);
         }
 
-        let _len_prg_rom = header_buf[4];
-        let _len_chr_rom = header_buf[5];
+        let len_prg_rom = header_buf[4] as usize * 16384;
+        let len_chr_rom = header_buf[5] as usize * 8192;
         let mapper_id = (header_buf[6] >> 4) + (header_buf[7] & 0xf0);
 
         let mirroring = header_buf[6] & 0x1 != 0;
@@ -51,8 +51,8 @@ impl INesHeader {
         }
 
         Ok(Self {
-            _len_prg_rom,
-            _len_chr_rom,
+            len_prg_rom,
+            len_chr_rom,
             mapper_id,
         })
     }
@@ -98,7 +98,16 @@ impl Mapper {
         println!("{header:?}");
 
         match header.mapper_id {
-            1 => todo!(),
+            1 => {
+                let prg_ram = Some(vec![0_u8; 32 * 1024]);
+                let mut prg_rom = vec![0_u8; header.len_prg_rom];
+                let mut chr_rom = vec![0_u8; header.len_chr_rom];
+
+                reader.read_exact(&mut prg_rom)?;
+                reader.read_exact(&mut chr_rom)?;
+
+                Ok(Self::MMC1(MMC1::new(prg_ram, prg_rom, chr_rom)))
+            }
             _ => Err(NesMachineError::UnsupportedMapper),
         }
     }

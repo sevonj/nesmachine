@@ -1,6 +1,6 @@
 use egui::{Context, InnerResponse, TopBottomPanel, Ui, Widget};
 use nesmc_emu::NesMachine;
-use rfd::{AsyncFileDialog, FileDialog};
+use rfd::FileDialog;
 
 pub struct MenuBar<'a> {
     machine: &'a mut NesMachine,
