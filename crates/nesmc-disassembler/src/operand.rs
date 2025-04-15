@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use nesmc_emu::bus::Bus;
+use nesmc_emu::NesMachine;
 use nesmc_types::instruction::OpCode;
 
 pub enum Operand {
@@ -44,7 +44,7 @@ impl Debug for Operand {
 
 impl Operand {
     /// addr is the addr of opcode
-    pub fn from_read_bus(op_code: OpCode, bus: &Bus, addr: u16) -> Self {
+    pub fn from_read_machine(op_code: OpCode, machine: &NesMachine, addr: u16) -> Self {
         match op_code {
             OpCode::Illegal(_) => Self::Todo,
 
@@ -73,8 +73,8 @@ impl Operand {
             | OpCode::StaAbs
             | OpCode::StxAbs
             | OpCode::StyAbs => {
-                let l = bus.read(addr + 1) as u16;
-                let h = bus.read(addr + 2) as u16;
+                let l = machine.bus.read(addr + 1) as u16;
+                let h = machine.bus.read(addr + 2) as u16;
                 Self::Abs((h << 8) + l)
             }
 
@@ -93,8 +93,8 @@ impl Operand {
             | OpCode::RorAbsX
             | OpCode::SbcAbsX
             | OpCode::StaAbsX => {
-                let l = bus.read(addr + 1) as u16;
-                let h = bus.read(addr + 2) as u16;
+                let l = machine.bus.read(addr + 1) as u16;
+                let h = machine.bus.read(addr + 2) as u16;
                 Self::AbsX((h << 8) + l)
             }
 
@@ -107,8 +107,8 @@ impl Operand {
             | OpCode::OraAbsY
             | OpCode::SbcAbsY
             | OpCode::StaAbsY => {
-                let l = bus.read(addr + 1) as u16;
-                let h = bus.read(addr + 2) as u16;
+                let l = machine.bus.read(addr + 1) as u16;
+                let h = machine.bus.read(addr + 2) as u16;
                 Self::AbsY((h << 8) + l)
             }
 
@@ -122,7 +122,7 @@ impl Operand {
             | OpCode::LdxImm
             | OpCode::LdyImm
             | OpCode::OraImm
-            | OpCode::SbcImm => Self::Imm(bus.read(addr + 1)),
+            | OpCode::SbcImm => Self::Imm(machine.bus.read(addr + 1)),
 
             OpCode::Jam(_)
             | OpCode::BrkImpl
@@ -152,8 +152,8 @@ impl Operand {
             | OpCode::TyaImpl => Self::Impl,
 
             OpCode::JmpInd => {
-                let l = bus.read(addr + 1) as u16;
-                let h = bus.read(addr + 2) as u16;
+                let l = machine.bus.read(addr + 1) as u16;
+                let h = machine.bus.read(addr + 2) as u16;
                 Self::Ind((h << 8) + l)
             }
 
@@ -164,7 +164,7 @@ impl Operand {
             | OpCode::LdaXInd
             | OpCode::OraXInd
             | OpCode::SbcXInd
-            | OpCode::StaXInd => Self::XInd(bus.read(addr + 1)),
+            | OpCode::StaXInd => Self::XInd(machine.bus.read(addr + 1)),
 
             OpCode::AdcIndY
             | OpCode::AndIndY
@@ -173,7 +173,7 @@ impl Operand {
             | OpCode::LdaIndY
             | OpCode::OraIndY
             | OpCode::SbcIndY
-            | OpCode::StaIndY => Self::IndY(bus.read(addr + 1)),
+            | OpCode::StaIndY => Self::IndY(machine.bus.read(addr + 1)),
 
             OpCode::BccRel
             | OpCode::BcsRel
@@ -182,7 +182,7 @@ impl Operand {
             | OpCode::BneRel
             | OpCode::BplRel
             | OpCode::BvcRel
-            | OpCode::BvsRel => Self::Rel(bus.read(addr + 1)),
+            | OpCode::BvsRel => Self::Rel(machine.bus.read(addr + 1)),
 
             OpCode::AdcZpg
             | OpCode::AndZpg
@@ -204,7 +204,7 @@ impl Operand {
             | OpCode::SbcZpg
             | OpCode::StaZpg
             | OpCode::StxZpg
-            | OpCode::StyZpg => Self::Zpg(bus.read(addr + 1)),
+            | OpCode::StyZpg => Self::Zpg(machine.bus.read(addr + 1)),
 
             OpCode::AdcZpgX
             | OpCode::AndZpgX
@@ -221,9 +221,9 @@ impl Operand {
             | OpCode::RorZpgX
             | OpCode::SbcZpgX
             | OpCode::StaZpgX
-            | OpCode::StyZpgX => Self::ZpgX(bus.read(addr + 1)),
+            | OpCode::StyZpgX => Self::ZpgX(machine.bus.read(addr + 1)),
 
-            OpCode::LdxZpgY | OpCode::StxZpgY => Self::ZpgY(bus.read(addr + 1)),
+            OpCode::LdxZpgY | OpCode::StxZpgY => Self::ZpgY(machine.bus.read(addr + 1)),
         }
     }
 }

@@ -49,12 +49,14 @@ impl Widget for ScrollSlider<'_> {
             .response;
 
         // scroll wheel
-        if let (true, Some(_)) = (
-            response.contains_pointer(),
-            ui.input(|i| i.pointer.hover_pos()),
-        ) {
-            let scroll_delta = ui.input(|i| i.smooth_scroll_delta).y as isize;
-            *self.value = self.value.saturating_add_signed(scroll_delta);
+        if ui.is_enabled() {
+            if let (true, Some(_)) = (
+                response.contains_pointer(),
+                ui.input(|i| i.pointer.hover_pos()),
+            ) {
+                let scroll_delta = ui.input(|i| i.raw_scroll_delta).y as isize;
+                *self.value = self.value.saturating_add_signed(scroll_delta);
+            }
         }
 
         response

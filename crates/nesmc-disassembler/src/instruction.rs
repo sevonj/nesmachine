@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use nesmc_emu::bus::Bus;
+use nesmc_emu::NesMachine;
 use nesmc_types::instruction::OpCode;
 
 use crate::operand::Operand;
@@ -11,9 +11,9 @@ pub struct DisassInst {
 }
 
 impl DisassInst {
-    pub fn from_read_bus(bus: &Bus, addr: u16) -> Self {
-        let op_code = OpCode::from(bus.read(addr));
-        let operand = Operand::from_read_bus(op_code, bus, addr);
+    pub fn from_read_machine(machine: &NesMachine, addr: u16) -> Self {
+        let op_code = OpCode::from(machine.bus.read(addr));
+        let operand = Operand::from_read_machine(op_code, machine, addr);
         Self { op_code, operand }
     }
 

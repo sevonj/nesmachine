@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 #[derive(Debug)]
 pub struct CpuStatus {
     /// Carry
@@ -27,10 +29,18 @@ impl Default for CpuStatus {
     }
 }
 
-impl CpuStatus {
-    /// Reset button behavior
-    pub fn reset(&mut self) {
-        self.i = true
+impl Display for CpuStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}{}{}{}{}{}",
+            if self.n { "N" } else { "-" },
+            if self.v { "V" } else { "-" },
+            if self.d { "D" } else { "-" },
+            if self.i { "I" } else { "-" },
+            if self.z { "Z" } else { "-" },
+            if self.c { "C" } else { "-" },
+        )
     }
 }
 
@@ -71,5 +81,12 @@ impl From<CpuStatus> for u8 {
         }
 
         value
+    }
+}
+
+impl CpuStatus {
+    /// Reset button behavior
+    pub fn reset(&mut self) {
+        self.i = true
     }
 }
