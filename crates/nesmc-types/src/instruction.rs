@@ -4,6 +4,7 @@ use OpCode::*;
 
 pub enum OpCode {
     Illegal(u8),
+    Jam(u8),
 
     AdcAbs,
     AdcAbsX,
@@ -163,7 +164,7 @@ impl From<u8> for OpCode {
         match value {
             0x00 => BrkImpl,
             0x01 => OraXInd,
-            0x02 => Illegal(value),
+            0x02 => Jam(value),
             0x03 => Illegal(value),
             0x04 => Illegal(value),
             0x05 => OraZpg,
@@ -180,7 +181,7 @@ impl From<u8> for OpCode {
 
             0x10 => BplRel,
             0x11 => OraIndY,
-            0x12 => Illegal(value),
+            0x12 => Jam(value),
             0x13 => Illegal(value),
             0x14 => Illegal(value),
             0x15 => OraZpgX,
@@ -197,7 +198,7 @@ impl From<u8> for OpCode {
 
             0x20 => JsrAbs,
             0x21 => AndXInd,
-            0x22 => Illegal(value),
+            0x22 => Jam(value),
             0x23 => Illegal(value),
             0x24 => BitZpg,
             0x25 => AndZpg,
@@ -214,7 +215,7 @@ impl From<u8> for OpCode {
 
             0x30 => BmiRel,
             0x31 => AndIndY,
-            0x32 => Illegal(value),
+            0x32 => Jam(value),
             0x33 => Illegal(value),
             0x34 => Illegal(value),
             0x35 => AndZpgX,
@@ -231,7 +232,7 @@ impl From<u8> for OpCode {
 
             0x40 => RtiImpl,
             0x41 => EorXInd,
-            0x42 => Illegal(value),
+            0x42 => Jam(value),
             0x43 => Illegal(value),
             0x44 => Illegal(value),
             0x45 => EorZpg,
@@ -248,7 +249,7 @@ impl From<u8> for OpCode {
 
             0x50 => BvcRel,
             0x51 => EorIndY,
-            0x52 => Illegal(value),
+            0x52 => Jam(value),
             0x53 => Illegal(value),
             0x54 => Illegal(value),
             0x55 => EorZpgX,
@@ -265,7 +266,7 @@ impl From<u8> for OpCode {
 
             0x60 => RtsImpl,
             0x61 => AdcXInd,
-            0x62 => Illegal(value),
+            0x62 => Jam(value),
             0x63 => Illegal(value),
             0x64 => Illegal(value),
             0x65 => AdcZpg,
@@ -282,7 +283,7 @@ impl From<u8> for OpCode {
 
             0x70 => BvsRel,
             0x71 => AdcIndY,
-            0x72 => Illegal(value),
+            0x72 => Jam(value),
             0x73 => Illegal(value),
             0x74 => Illegal(value),
             0x75 => AdcZpgX,
@@ -316,7 +317,7 @@ impl From<u8> for OpCode {
 
             0x90 => BccRel,
             0x91 => StaIndY,
-            0x92 => Illegal(value),
+            0x92 => Jam(value),
             0x93 => Illegal(value),
             0x94 => StyZpgX,
             0x95 => StaZpgX,
@@ -350,7 +351,7 @@ impl From<u8> for OpCode {
 
             0xb0 => BcsRel,
             0xb1 => LdaIndY,
-            0xb2 => Illegal(value),
+            0xb2 => Jam(value),
             0xb3 => Illegal(value),
             0xb4 => LdyZpgX,
             0xb5 => LdaZpgX,
@@ -384,7 +385,7 @@ impl From<u8> for OpCode {
 
             0xd0 => BneRel,
             0xd1 => CmpIndY,
-            0xd2 => Illegal(value),
+            0xd2 => Jam(value),
             0xd3 => Illegal(value),
             0xd4 => Illegal(value),
             0xd5 => CmpZpgX,
@@ -418,7 +419,7 @@ impl From<u8> for OpCode {
 
             0xf0 => BeqRel,
             0xf1 => SbcIndY,
-            0xf2 => Illegal(value),
+            0xf2 => Jam(value),
             0xf3 => Illegal(value),
             0xf4 => Illegal(value),
             0xf5 => SbcZpgX,
@@ -433,6 +434,12 @@ impl From<u8> for OpCode {
             0xfe => IncAbsX,
             0xff => Illegal(value),
         }
+    }
+}
+
+impl OpCode {
+    pub const fn is_illegal(&self) -> bool {
+        matches!(self, Illegal(_) | Jam(_))
     }
 }
 
@@ -484,5 +491,25 @@ mod tests {
 
         assert_eq!(DexImpl, OpCode::from(0xca));
         assert_eq!(DeyImpl, OpCode::from(0x88));
+    }
+
+    #[test]
+    fn test_match_ill_jam() {
+        assert_eq!(Jam(0x02), OpCode::from(0x02));
+        assert_eq!(Jam(0x12), OpCode::from(0x12));
+        assert_eq!(Jam(0x22), OpCode::from(0x22));
+        assert_eq!(Jam(0x32), OpCode::from(0x32));
+        assert_eq!(Jam(0x42), OpCode::from(0x42));
+        assert_eq!(Jam(0x52), OpCode::from(0x52));
+        assert_eq!(Jam(0x62), OpCode::from(0x62));
+        assert_eq!(Jam(0x72), OpCode::from(0x72));
+
+        assert_eq!(Jam(0x92), OpCode::from(0x92));
+
+        assert_eq!(Jam(0xb2), OpCode::from(0xb2));
+
+        assert_eq!(Jam(0xd2), OpCode::from(0xd2));
+
+        assert_eq!(Jam(0xf2), OpCode::from(0xf2));
     }
 }

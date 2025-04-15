@@ -1,6 +1,6 @@
-use egui::{DragValue, RichText, SidePanel, Ui};
+use egui::{Color32, DragValue, RichText, SidePanel, Ui};
 use egui_extras::{Column, TableBuilder};
-use nesmc_disassembler::cpu_addresses::CpuAddressKind;
+use nesmc_disassembler::{cpu_addresses::CpuAddressKind, instruction::DisassInst};
 use nesmc_emu::bus::Bus;
 
 use crate::components::ScrollSlider;
@@ -10,6 +10,8 @@ const W_ADDR_COL: f32 = 48.;
 const W_VALUE_COL: f32 = 48.;
 const H_HEADER: f32 = 24.;
 const H_ROW: f32 = 16.;
+
+const COL_ILLEGAL: Color32 = Color32::DARK_RED;
 
 const MAX_ADDR: usize = 0xffff;
 
@@ -103,6 +105,13 @@ impl MemBrowser {
                             });
 
                             row.col(|ui| {
+                                let disass = DisassInst::from_read_bus(bus, addr as u16);
+                                let mut text = RichText::new(format!("{disass:?}")).monospace();
+                                if disass.is_illegal() {
+                                    text = text.color(COL_ILLEGAL);
+                                }
+                                ui.label(text);
+
                                 if ui.next_widget_position().y >= available_h {
                                     bail = true;
                                 }

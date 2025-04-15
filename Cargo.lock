@@ -1890,6 +1890,10 @@ dependencies = [
 [[package]]
 name = "nesmc-disassembler"
 version = "0.1.0"
+dependencies = [
+ "nesmc-emu",
+ "nesmc-types",
+]
 
 [[package]]
 name = "nesmc-emu"
