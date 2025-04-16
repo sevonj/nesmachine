@@ -11,57 +11,57 @@ impl Cpu {
 
     /// Branch if carry clear
     pub(super) fn instr_bcc_rel(&mut self, bus: &mut Bus) {
+        let value = self.fetch_operand_rel(bus);
         if !self.status.c {
-            let value = self.fetch_operand_rel(bus);
             self.branch(value);
         }
     }
     /// Branch if carry set
     pub(super) fn instr_bcs_rel(&mut self, bus: &mut Bus) {
+        let value = self.fetch_operand_rel(bus);
         if self.status.c {
-            let value = self.fetch_operand_rel(bus);
             self.branch(value);
         }
     }
     /// Branch if equal
     pub(super) fn instr_beq_rel(&mut self, bus: &mut Bus) {
+        let value = self.fetch_operand_rel(bus);
         if self.status.z {
-            let value = self.fetch_operand_rel(bus);
             self.branch(value);
         }
     }
     /// Branch not equal
     pub(super) fn instr_bne_rel(&mut self, bus: &mut Bus) {
+        let value = self.fetch_operand_rel(bus);
         if !self.status.z {
-            let value = self.fetch_operand_rel(bus);
             self.branch(value);
         }
     }
     /// Branch if plus (not negative)
     pub(super) fn instr_bpl_rel(&mut self, bus: &mut Bus) {
+        let value = self.fetch_operand_rel(bus);
         if !self.status.n {
-            let value = self.fetch_operand_rel(bus);
             self.branch(value);
         }
     }
     /// Branch if minus (negative)
     pub(super) fn instr_bmi_rel(&mut self, bus: &mut Bus) {
+        let value = self.fetch_operand_rel(bus);
         if self.status.n {
-            let value = self.fetch_operand_rel(bus);
             self.branch(value);
         }
     }
     /// Branch if overflow clear
     pub(super) fn instr_bvc_rel(&mut self, bus: &mut Bus) {
+        let value = self.fetch_operand_rel(bus);
         if !self.status.v {
-            let value = self.fetch_operand_rel(bus);
             self.branch(value);
         }
     }
     /// Branch if overflow set
     pub(super) fn instr_bvs_rel(&mut self, bus: &mut Bus) {
+        let value = self.fetch_operand_rel(bus);
         if self.status.v {
-            let value = self.fetch_operand_rel(bus);
             self.branch(value);
         }
     }
@@ -77,13 +77,13 @@ impl Cpu {
 
     /// Jump to subroutine
     pub(super) fn instr_jsr_abs(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_address_abs(bus);
+        let value = self.fetch_address_abs(bus);
         let ret_addr = self.pc.wrapping_sub(1);
-        let hi = (ret_addr << 8) as u8;
+        let hi = (ret_addr >> 8) as u8;
         let lo = (ret_addr & 0xff) as u8;
         self.push_stack(hi, bus);
         self.push_stack(lo, bus);
-        self.pc = addr;
+        self.pc = value;
     }
 
     /// Return from subroutine

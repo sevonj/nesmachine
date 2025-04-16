@@ -31,7 +31,7 @@ impl Cpu {
 
     fn instr_ror(&mut self, bus: &mut Bus, addr: u16) {
         let value = bus.read(addr);
-        let carry = if self.status.c { 1 } else { 0 };
+        let carry = if self.status.c { 0x80 } else { 0 };
         let shifted = (value >> 1) | carry;
         self.status.c = value & 0x01 != 0;
         self.set_zero(shifted);
@@ -113,7 +113,7 @@ impl Cpu {
     }
 
     pub(super) fn instr_ror_a(&mut self) {
-        let carry = if self.status.c { 1 } else { 0 };
+        let carry = if self.status.c { 0x80 } else { 0 };
         let shifted = (self.a >> 1) | carry;
         self.status.c = self.a & 0x01 != 0;
         self.set_zero(shifted);

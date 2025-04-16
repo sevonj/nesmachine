@@ -1,6 +1,7 @@
 //! Cartridge / "rom" module
 
 mod mmc1;
+mod nrom;
 
 use std::{
     fs::File,
@@ -8,7 +9,8 @@ use std::{
     path::Path,
 };
 
-pub use mmc1::MMC1;
+pub use mmc1::Mmc1;
+use nrom::Nrom;
 
 use crate::nes_machine::NesMachineError;
 
@@ -67,21 +69,24 @@ pub trait MapperIo {
 pub enum Mapper {
     #[default]
     None,
-    MMC1(MMC1),
+    Nrom(Nrom),
+    Mmc1(Mmc1),
 }
 
 impl Device for Mapper {
     fn read(&self, addr: u16) -> u8 {
         match self {
             Mapper::None => 0,
-            Mapper::MMC1(mmc1) => mmc1.read(addr),
+            Mapper::Nrom(nrom) => nrom.read(addr),
+            Mapper::Mmc1(mmc1) => mmc1.read(addr),
         }
     }
 
     fn write(&mut self, addr: u16, value: u8) {
         match self {
             Mapper::None => (),
-            Mapper::MMC1(mmc1) => mmc1.write(addr, value),
+            Mapper::Nrom(nrom) => nrom.write(addr, value),
+            Mapper::Mmc1(mmc1) => mmc1.write(addr, value),
         }
     }
 }
@@ -98,6 +103,15 @@ impl Mapper {
         println!("{header:?}");
 
         match header.mapper_id {
+            0 => {
+                let mut prg_rom = vec![0_u8; header.len_prg_rom];
+                let mut chr_rom = vec![0_u8; header.len_chr_rom];
+
+                reader.read_exact(&mut prg_rom)?;
+                reader.read_exact(&mut chr_rom)?;
+
+                Ok(Self::Nrom(Nrom::new(prg_rom, chr_rom)))
+            }
             1 => {
                 let prg_ram = Some(vec![0_u8; 32 * 1024]);
                 let mut prg_rom = vec![0_u8; header.len_prg_rom];
@@ -106,7 +120,7 @@ impl Mapper {
                 reader.read_exact(&mut prg_rom)?;
                 reader.read_exact(&mut chr_rom)?;
 
-                Ok(Self::MMC1(MMC1::new(prg_ram, prg_rom, chr_rom)))
+                Ok(Self::Mmc1(Mmc1::new(prg_ram, prg_rom, chr_rom)))
             }
             _ => Err(NesMachineError::UnsupportedMapper),
         }

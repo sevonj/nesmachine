@@ -1,6 +1,6 @@
 use super::MapperIo;
 
-const KB: usize = 0x400;
+const KIB: usize = 1024;
 
 #[derive(Debug)]
 enum NametableArrangement {
@@ -64,7 +64,7 @@ impl ChrBankMode {
 }
 
 #[derive(Debug)]
-pub struct MMC1 {
+pub struct Mmc1 {
     /// Optional 8 KB program ram
     prg_ram: Option<Vec<u8>>,
     prg_rom: Vec<u8>,
@@ -80,7 +80,7 @@ pub struct MMC1 {
     chr_mode: ChrBankMode,
 }
 
-impl MMC1 {
+impl Mmc1 {
     const SR_RESET_BIT: u8 = 0x80;
 
     pub fn new(prg_ram: Option<Vec<u8>>, prg_rom: Vec<u8>, chr_rom: Vec<u8>) -> Self {
@@ -116,8 +116,8 @@ impl MMC1 {
         let local_addr = (addr - 0x8000) as usize;
 
         let off_in_bank = match self.prg_mode {
-            PrgBankMode::Big => local_addr % (32 * KB),
-            PrgBankMode::SplitFixFirst | PrgBankMode::SplitFixLast => local_addr % (16 * KB),
+            PrgBankMode::Big => local_addr % (32 * KIB),
+            PrgBankMode::SplitFixFirst | PrgBankMode::SplitFixLast => local_addr % (16 * KIB),
         };
 
         let mapped_addr = match self.prg_mode {
@@ -199,11 +199,11 @@ impl MMC1 {
             bank_no &= 0xfe;
         }
 
-        self.prg_bank_offset = bank_no * 16 * KB;
+        self.prg_bank_offset = bank_no * 16 * KIB;
     }
 }
 
-impl MapperIo for MMC1 {
+impl MapperIo for Mmc1 {
     fn read(&self, addr: u16) -> u8 {
         match addr {
             0x0000..=0x5fff => 0,

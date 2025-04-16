@@ -4,6 +4,7 @@ mod bitwise;
 mod branching;
 mod comparison;
 mod flags;
+mod illegal;
 mod shift;
 
 use nesmc_types::instruction::OpCode;
@@ -15,8 +16,33 @@ use super::Cpu;
 impl Cpu {
     pub(super) fn exec_instruction(&mut self, bus: &mut Bus, op_code: OpCode) {
         match op_code {
+            // Illegal
             OpCode::Illegal(_) => (),
-            OpCode::Jam(_) => (),
+            OpCode::Jam => (),
+            OpCode::NopImm => self.instr_nop_imm(bus),
+            OpCode::NopAbs => self.instr_nop_abs(bus),
+            OpCode::NopAbsX => self.instr_nop_absx(bus),
+            OpCode::NopZpg => self.instr_nop_zpg(bus),
+            OpCode::NopZpgX => self.instr_nop_zpgx(bus),
+            OpCode::LaxAbs => self.instr_lax_abs(bus),
+            OpCode::LaxAbsY => self.instr_lax_absy(bus),
+            OpCode::LaxXInd => self.instr_lax_xind(bus),
+            OpCode::LaxIndY => self.instr_lax_indy(bus),
+            OpCode::LaxZpg => self.instr_lax_zpg(bus),
+            OpCode::LaxZpgY => self.instr_lax_zpgy(bus),
+            OpCode::SaxAbs => self.instr_sax_abs(bus),
+            OpCode::SaxXind => self.instr_sax_xind(bus),
+            OpCode::SaxZpg => self.instr_sax_zpg(bus),
+            OpCode::SaxZpgY => self.instr_sax_zpgy(bus),
+            OpCode::DcpAbs => self.instr_dcp_abs(bus),
+            OpCode::DcpAbsX => self.instr_dcp_absx(bus),
+            OpCode::DcpAbsY => self.instr_dcp_absy(bus),
+            OpCode::DcpXInd => self.instr_dcp_xind(bus),
+            OpCode::DcpIndY => self.instr_dcp_indy(bus),
+            OpCode::DcpZpg => self.instr_dcp_zpg(bus),
+            OpCode::DcpZpgX => self.instr_dcp_zpgx(bus),
+
+            // Legal
             OpCode::AdcAbs => self.instr_adc_abs(bus),
             OpCode::AdcAbsX => self.instr_adc_absx(bus),
             OpCode::AdcAbsY => self.instr_adc_absy(bus),

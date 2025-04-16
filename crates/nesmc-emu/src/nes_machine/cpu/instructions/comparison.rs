@@ -23,61 +23,61 @@ impl Cpu {
     }
 
     pub(super) fn instr_cmp_abs(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_abs(bus);
-        self.instr_cmp(addr);
+        let value = self.fetch_operand_abs(bus);
+        self.instr_cmp(value);
     }
     pub(super) fn instr_cmp_absx(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_absx(bus);
-        self.instr_cmp(addr);
+        let value = self.fetch_operand_absx(bus);
+        self.instr_cmp(value);
     }
     pub(super) fn instr_cmp_absy(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_absy(bus);
-        self.instr_cmp(addr);
+        let value = self.fetch_operand_absy(bus);
+        self.instr_cmp(value);
     }
     pub(super) fn instr_cmp_imm(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_imm(bus);
-        self.instr_cmp(addr);
+        let value = self.fetch_operand_imm(bus);
+        self.instr_cmp(value);
     }
     pub(super) fn instr_cmp_xind(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_xind(bus);
-        self.instr_cmp(addr);
+        let value = self.fetch_operand_xind(bus);
+        self.instr_cmp(value);
     }
     pub(super) fn instr_cmp_indy(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_indy(bus);
-        self.instr_cmp(addr);
+        let value = self.fetch_operand_indy(bus);
+        self.instr_cmp(value);
     }
     pub(super) fn instr_cmp_zpg(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_zpg(bus);
-        self.instr_cmp(addr);
+        let value = self.fetch_operand_zpg(bus);
+        self.instr_cmp(value);
     }
     pub(super) fn instr_cmp_zpgx(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_zpgx(bus);
-        self.instr_cmp(addr);
+        let value = self.fetch_operand_zpgx(bus);
+        self.instr_cmp(value);
     }
 
     pub(super) fn instr_cpx_abs(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_abs(bus);
-        self.instr_cpx(addr);
+        let value = self.fetch_operand_abs(bus);
+        self.instr_cpx(value);
     }
     pub(super) fn instr_cpx_imm(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_imm(bus);
-        self.instr_cpx(addr);
+        let value = self.fetch_operand_imm(bus);
+        self.instr_cpx(value);
     }
     pub(super) fn instr_cpx_zpg(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_zpg(bus);
-        self.instr_cpx(addr);
+        let value = self.fetch_operand_zpg(bus);
+        self.instr_cpx(value);
     }
 
     pub(super) fn instr_cpy_abs(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_abs(bus);
-        self.instr_cpy(addr);
+        let value = self.fetch_operand_abs(bus);
+        self.instr_cpy(value);
     }
     pub(super) fn instr_cpy_imm(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_imm(bus);
-        self.instr_cpy(addr);
+        let value = self.fetch_operand_imm(bus);
+        self.instr_cpy(value);
     }
     pub(super) fn instr_cpy_zpg(&mut self, bus: &mut Bus) {
-        let addr = self.fetch_operand_zpg(bus);
-        self.instr_cpy(addr);
+        let value = self.fetch_operand_zpg(bus);
+        self.instr_cpy(value);
     }
 }

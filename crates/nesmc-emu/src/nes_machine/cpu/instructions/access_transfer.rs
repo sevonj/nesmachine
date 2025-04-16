@@ -1,97 +1,100 @@
-use crate::{bus::Bus, nes_machine::cpu::Cpu};
+use crate::{
+    bus::Bus,
+    nes_machine::cpu::{Cpu, CpuStatus},
+};
 
 impl Cpu {
-    fn instr_lda(&mut self, op: u8) {
-        self.a = op;
-        self.set_zero(op);
-        self.set_negative(op);
+    fn instr_lda(&mut self, value: u8) {
+        self.a = value;
+        self.set_zero(value);
+        self.set_negative(value);
     }
 
-    fn instr_ldx(&mut self, op: u8) {
-        self.x = op;
-        self.set_zero(op);
-        self.set_negative(op);
+    fn instr_ldx(&mut self, value: u8) {
+        self.x = value;
+        self.set_zero(value);
+        self.set_negative(value);
     }
 
-    fn instr_ldy(&mut self, op: u8) {
-        self.y = op;
-        self.set_zero(op);
-        self.set_negative(op);
+    fn instr_ldy(&mut self, value: u8) {
+        self.y = value;
+        self.set_zero(value);
+        self.set_negative(value);
     }
 
     pub(super) fn instr_lda_abs(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_abs(bus);
-        self.instr_lda(op);
+        let value = self.fetch_operand_abs(bus);
+        self.instr_lda(value);
     }
     pub(super) fn instr_lda_absx(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_absx(bus);
-        self.instr_lda(op);
+        let value = self.fetch_operand_absx(bus);
+        self.instr_lda(value);
     }
     pub(super) fn instr_lda_absy(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_absy(bus);
-        self.instr_lda(op);
+        let value = self.fetch_operand_absy(bus);
+        self.instr_lda(value);
     }
     pub(super) fn instr_lda_imm(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_imm(bus);
-        self.instr_lda(op);
+        let value = self.fetch_operand_imm(bus);
+        self.instr_lda(value);
     }
     pub(super) fn instr_lda_xind(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_xind(bus);
-        self.instr_lda(op);
+        let value = self.fetch_operand_xind(bus);
+        self.instr_lda(value);
     }
     pub(super) fn instr_lda_indy(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_indy(bus);
-        self.instr_lda(op);
+        let value = self.fetch_operand_indy(bus);
+        self.instr_lda(value);
     }
     pub(super) fn instr_lda_zpg(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_zpg(bus);
-        self.instr_lda(op);
+        let value = self.fetch_operand_zpg(bus);
+        self.instr_lda(value);
     }
     pub(super) fn instr_lda_zpgx(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_zpgx(bus);
-        self.instr_lda(op);
+        let value = self.fetch_operand_zpgx(bus);
+        self.instr_lda(value);
     }
 
     pub(super) fn instr_ldx_abs(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_abs(bus);
-        self.instr_ldx(op);
+        let value = self.fetch_operand_abs(bus);
+        self.instr_ldx(value);
     }
     pub(super) fn instr_ldx_absy(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_absy(bus);
-        self.instr_ldx(op);
+        let value = self.fetch_operand_absy(bus);
+        self.instr_ldx(value);
     }
     pub(super) fn instr_ldx_imm(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_imm(bus);
-        self.instr_ldx(op);
+        let value = self.fetch_operand_imm(bus);
+        self.instr_ldx(value);
     }
     pub(super) fn instr_ldx_zpg(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_zpg(bus);
-        self.instr_ldx(op);
+        let value = self.fetch_operand_zpg(bus);
+        self.instr_ldx(value);
     }
     pub(super) fn instr_ldx_zpgy(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_zpgx(bus);
-        self.instr_ldx(op);
+        let value = self.fetch_operand_zpgy(bus);
+        self.instr_ldx(value);
     }
 
     pub(super) fn instr_ldy_abs(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_abs(bus);
-        self.instr_ldy(op);
+        let value = self.fetch_operand_abs(bus);
+        self.instr_ldy(value);
     }
     pub(super) fn instr_ldy_absx(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_absx(bus);
-        self.instr_ldy(op);
+        let value = self.fetch_operand_absx(bus);
+        self.instr_ldy(value);
     }
     pub(super) fn instr_ldy_imm(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_imm(bus);
-        self.instr_ldy(op);
+        let value = self.fetch_operand_imm(bus);
+        self.instr_ldy(value);
     }
     pub(super) fn instr_ldy_zpg(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_zpg(bus);
-        self.instr_ldy(op);
+        let value = self.fetch_operand_zpg(bus);
+        self.instr_ldy(value);
     }
     pub(super) fn instr_ldy_zpgx(&mut self, bus: &mut Bus) {
-        let op = self.fetch_operand_zpgx(bus);
-        self.instr_ldy(op);
+        let value = self.fetch_operand_zpgx(bus);
+        self.instr_ldy(value);
     }
 
     pub(super) fn instr_sta_abs(&mut self, bus: &mut Bus) {
@@ -204,7 +207,7 @@ impl Cpu {
 
     /// Pull status from stack
     pub(super) fn instr_plp_impl(&mut self, bus: &mut Bus) {
-        self.a = self.pop_stack(bus);
+        self.status = CpuStatus::from(self.pop_stack(bus));
         // TODO: I flag should be delayed by 1 inst
     }
 }

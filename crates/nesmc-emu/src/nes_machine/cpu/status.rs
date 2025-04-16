@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CpuStatus {
     /// Carry
     pub c: bool,
@@ -53,7 +53,7 @@ impl From<u8> for CpuStatus {
             d: value & 0x08 != 0,
 
             v: value & 0x40 != 0,
-            n: value & 0x81 != 0,
+            n: value & 0x80 != 0,
         }
     }
 }
