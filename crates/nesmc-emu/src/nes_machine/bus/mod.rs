@@ -54,4 +54,9 @@ impl Bus {
             0x4020..=0xffff => self.cart.write(addr, value),
         }
     }
+
+    /// Reset button behavior
+    pub fn reset(&mut self) {
+        // TODO
+    }
 }

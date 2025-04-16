@@ -20,4 +20,15 @@ impl NesMachine {
         self.bus.cart = Mapper::open(path)?;
         Ok(())
     }
+
+    /// Reset button behavior
+    pub fn reset(&mut self) {
+        self.bus.reset();
+        self.cpu.reset();
+    }
+
+    /// Step one CPU instruction
+    pub fn step(&mut self) {
+        self.cpu.step(&mut self.bus);
+    }
 }

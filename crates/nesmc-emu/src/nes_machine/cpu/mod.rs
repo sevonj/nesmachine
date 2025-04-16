@@ -1,6 +1,12 @@
+mod flags;
+mod instructions;
+mod operand;
 mod status;
 
+use nesmc_types::instruction::OpCode;
 use status::CpuStatus;
+
+use super::bus::Bus;
 
 #[derive(Debug)]
 pub struct Cpu {
@@ -31,5 +37,25 @@ impl Cpu {
         self.pc = 0xfffc;
         self.s = self.s.wrapping_sub(3);
         self.p.reset();
+    }
+
+    /// Step one CPU instruction
+    pub fn step(&mut self, bus: &mut Bus) {
+        // vblank interrupt
+        /*let ppu_status = bus.read(0x2002);
+        if ppu_status & 0b1000_0000 != 0 {
+            bus.write(0x2002, ppu_status & 0b0111_1111);
+            self.nmi(bus);
+            return;
+        }*/
+        // Fetch instruction
+        let op_code = OpCode::from(bus.read(self.pc));
+        self.inc_pc();
+        self.exec_instruction(bus, op_code)
+    }
+
+    /// Increment PC convenience shortcut
+    fn inc_pc(&mut self) {
+        self.pc = self.pc.wrapping_add(1);
     }
 }

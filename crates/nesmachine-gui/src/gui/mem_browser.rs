@@ -3,7 +3,7 @@ use egui_extras::{Column, TableBuilder};
 use nesmc_disassembler::{cpu_addresses::CpuAddressKind, instruction::DisassInst};
 use nesmc_emu::NesMachine;
 
-use crate::components::ScrollSlider;
+use super::components::ScrollSlider;
 
 const W_TYPE_COL: f32 = 52.;
 const W_ADDR_COL: f32 = 48.;
