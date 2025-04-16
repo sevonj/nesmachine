@@ -22,8 +22,8 @@ impl Cpu {
     fn instr_bit(&mut self, value: u8) {
         let result = self.a & value;
         self.set_zero(result);
-        self.p.v = value & (1 << 6) != 0;
-        self.p.n = value & (1 << 7) != 0;
+        self.status.v = value & (1 << 6) != 0;
+        self.status.n = value & (1 << 7) != 0;
     }
 
     pub(super) fn instr_and_abs(&mut self, bus: &mut Bus) {

@@ -4,7 +4,7 @@ impl Cpu {
     fn instr_asl(&mut self, bus: &mut Bus, addr: u16) {
         let value = bus.read(addr);
         let shifted = value << 1;
-        self.set_carry(value & 0x80 != 0);
+        self.status.c = value & 0x80 != 0;
         self.set_zero(shifted);
         self.set_negative(shifted);
         bus.write(addr, shifted);
@@ -13,7 +13,7 @@ impl Cpu {
     fn instr_lsr(&mut self, bus: &mut Bus, addr: u16) {
         let value = bus.read(addr);
         let shifted = value >> 1;
-        self.set_carry(value & 0x01 != 0);
+        self.status.c = value & 0x01 != 0;
         self.set_zero(shifted);
         self.set_negative(shifted);
         bus.write(addr, shifted);
@@ -21,9 +21,9 @@ impl Cpu {
 
     fn instr_rol(&mut self, bus: &mut Bus, addr: u16) {
         let value = bus.read(addr);
-        let carry = if self.p.c { 1 } else { 0 };
+        let carry = if self.status.c { 1 } else { 0 };
         let shifted = (value << 1) | carry;
-        self.set_carry(value & 0x80 != 0);
+        self.status.c = value & 0x80 != 0;
         self.set_zero(shifted);
         self.set_negative(shifted);
         bus.write(addr, shifted);
@@ -31,9 +31,9 @@ impl Cpu {
 
     fn instr_ror(&mut self, bus: &mut Bus, addr: u16) {
         let value = bus.read(addr);
-        let carry = if self.p.c { 1 } else { 0 };
+        let carry = if self.status.c { 1 } else { 0 };
         let shifted = (value >> 1) | carry;
-        self.set_carry(value & 0x01 != 0);
+        self.status.c = value & 0x01 != 0;
         self.set_zero(shifted);
         self.set_negative(shifted);
         bus.write(addr, shifted);
@@ -41,7 +41,7 @@ impl Cpu {
 
     pub(super) fn instr_asl_a(&mut self) {
         let shifted = self.a << 1;
-        self.set_carry(self.a & 0x80 != 0);
+        self.status.c = self.a & 0x80 != 0;
         self.set_zero(shifted);
         self.set_negative(shifted);
         self.a = shifted;
@@ -65,7 +65,7 @@ impl Cpu {
 
     pub(super) fn instr_lsr_a(&mut self) {
         let shifted = self.a >> 1;
-        self.set_carry(self.a & 0x01 != 0);
+        self.status.c = self.a & 0x01 != 0;
         self.set_zero(shifted);
         self.set_negative(shifted);
         self.a = shifted;
@@ -88,9 +88,9 @@ impl Cpu {
     }
 
     pub(super) fn instr_rol_a(&mut self) {
-        let carry = if self.p.c { 1 } else { 0 };
+        let carry = if self.status.c { 1 } else { 0 };
         let shifted = (self.a << 1) | carry;
-        self.set_carry(self.a & 0x80 != 0);
+        self.status.c = self.a & 0x80 != 0;
         self.set_zero(shifted);
         self.set_negative(shifted);
         self.a = shifted;
@@ -113,9 +113,9 @@ impl Cpu {
     }
 
     pub(super) fn instr_ror_a(&mut self) {
-        let carry = if self.p.c { 1 } else { 0 };
+        let carry = if self.status.c { 1 } else { 0 };
         let shifted = (self.a >> 1) | carry;
-        self.set_carry(self.a & 0x01 != 0);
+        self.status.c = self.a & 0x01 != 0;
         self.set_zero(shifted);
         self.set_negative(shifted);
         self.a = shifted;

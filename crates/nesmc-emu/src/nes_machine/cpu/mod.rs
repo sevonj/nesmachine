@@ -14,8 +14,8 @@ pub struct Cpu {
     pub x: u8,
     pub y: u8,
     pub pc: u16,
-    pub s: u8,
-    pub p: CpuStatus,
+    pub sp: u8,
+    pub status: CpuStatus,
 }
 
 impl Default for Cpu {
@@ -25,8 +25,8 @@ impl Default for Cpu {
             x: 0,
             y: 0,
             pc: 0xfffc,
-            s: 0xfd,
-            p: CpuStatus::default(),
+            sp: 0xfd,
+            status: CpuStatus::default(),
         }
     }
 }
@@ -35,8 +35,8 @@ impl Cpu {
     /// Reset button behavior
     pub fn reset(&mut self) {
         self.pc = 0xfffc;
-        self.s = self.s.wrapping_sub(3);
-        self.p.reset();
+        self.sp = self.sp.wrapping_sub(3);
+        self.status.reset();
     }
 
     /// Step one CPU instruction
@@ -57,5 +57,15 @@ impl Cpu {
     /// Increment PC convenience shortcut
     fn inc_pc(&mut self) {
         self.pc = self.pc.wrapping_add(1);
+    }
+
+    fn push_stack(&mut self, data: u8, bus: &mut Bus) {
+        bus.write(0x0100 + self.sp as u16, data);
+        self.sp = self.sp.wrapping_sub(1);
+    }
+
+    fn pop_stack(&mut self, bus: &mut Bus) -> u8 {
+        self.sp = self.sp.wrapping_add(1);
+        bus.read(0x0100 + self.sp as u16)
     }
 }

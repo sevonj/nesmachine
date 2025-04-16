@@ -67,7 +67,7 @@ impl CpuInspector {
                     ui.monospace("STACK");
                 });
                 row.col(|ui| {
-                    let text = format!("{:04X}", machine.cpu.s as usize + 0x100);
+                    let text = format!("{:04X}", machine.cpu.sp as usize + 0x100);
                     ui.monospace(text);
                 });
             });
@@ -76,7 +76,7 @@ impl CpuInspector {
                     ui.monospace("STATUS");
                 });
                 row.col(|ui| {
-                    let text = format!("{}", machine.cpu.p);
+                    let text = format!("{}", machine.cpu.status);
                     ui.monospace(text);
                 });
             });

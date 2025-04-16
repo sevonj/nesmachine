@@ -2,10 +2,10 @@ use crate::{bus::Bus, nes_machine::cpu::Cpu};
 
 impl Cpu {
     fn instr_adc(&mut self, op: u8) {
-        let carry = if self.p.c { 1 } else { 0 };
+        let carry = if self.status.c { 1 } else { 0 };
         let (result, ov1) = self.a.overflowing_add(op); // add data
         let (result, ov2) = result.overflowing_add(carry); // add carry from previous operation
-        self.set_carry(ov1 || ov2);
+        self.status.c = ov1 || ov2;
         self.set_zero(result);
         self.set_negative(result);
         self.set_overflow(op, result);
@@ -13,10 +13,10 @@ impl Cpu {
     }
 
     fn instr_sbc(&mut self, op: u8) {
-        let carry = if self.p.c { 1 } else { 0 };
+        let carry = if self.status.c { 1 } else { 0 };
         let (result, _ov1) = self.a.overflowing_add(!op); // add data
         let (result, _ov2) = result.overflowing_add(carry); // add carry from previous operation
-        self.set_carry(result <= self.a);
+        self.status.c = result <= self.a;
         self.set_zero(result);
         self.set_negative(result);
         self.set_overflow(!op, result);
