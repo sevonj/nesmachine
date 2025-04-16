@@ -3,6 +3,7 @@ mod arithmetic;
 mod bitwise;
 mod branching;
 mod comparison;
+mod flags;
 mod shift;
 
 use nesmc_types::instruction::OpCode;
@@ -48,10 +49,10 @@ impl Cpu {
             OpCode::BrkImpl => self.instr_brk_impl(bus),
             OpCode::BvcRel => self.instr_bvc_rel(bus),
             OpCode::BvsRel => self.instr_bvs_rel(bus),
-            OpCode::ClcImpl => (),
-            OpCode::CldImpl => (),
-            OpCode::CliImpl => (),
-            OpCode::ClvImpl => (),
+            OpCode::ClcImpl => self.instr_clc(),
+            OpCode::CldImpl => self.instr_cld(),
+            OpCode::CliImpl => self.instr_cli(),
+            OpCode::ClvImpl => self.instr_clv(),
             OpCode::CmpAbs => self.instr_cmp_abs(bus),
             OpCode::CmpAbsX => self.instr_cmp_absx(bus),
             OpCode::CmpAbsY => self.instr_cmp_absy(bus),
@@ -121,10 +122,10 @@ impl Cpu {
             OpCode::OraXInd => self.instr_ora_xind(bus),
             OpCode::OraZpg => self.instr_ora_zpg(bus),
             OpCode::OraZpgX => self.instr_ora_zpgx(bus),
-            OpCode::PhaImpl => (),
-            OpCode::PhpImpl => (),
-            OpCode::PlaImpl => (),
-            OpCode::PlpImpl => (),
+            OpCode::PhaImpl => self.instr_pha_impl(bus),
+            OpCode::PhpImpl => self.instr_php_impl(bus),
+            OpCode::PlaImpl => self.instr_pla_impl(bus),
+            OpCode::PlpImpl => self.instr_plp_impl(bus),
             OpCode::RolA => self.instr_rol_a(),
             OpCode::RolAbs => self.instr_rol_abs(bus),
             OpCode::RolAbsX => self.instr_rol_absx(bus),
@@ -145,9 +146,9 @@ impl Cpu {
             OpCode::SbcXInd => self.instr_sbc_xind(bus),
             OpCode::SbcZpg => self.instr_sbc_zpg(bus),
             OpCode::SbcZpgX => self.instr_sbc_zpgx(bus),
-            OpCode::SecImpl => (),
-            OpCode::SedImpl => (),
-            OpCode::SeiImpl => (),
+            OpCode::SecImpl => self.instr_sec(),
+            OpCode::SedImpl => self.instr_sed(),
+            OpCode::SeiImpl => self.instr_sei(),
             OpCode::StaAbs => self.instr_sta_abs(bus),
             OpCode::StaAbsX => self.instr_sta_absx(bus),
             OpCode::StaAbsY => self.instr_sta_absy(bus),
@@ -163,9 +164,9 @@ impl Cpu {
             OpCode::StyZpgX => self.instr_sty_zpgx(bus),
             OpCode::TaxImpl => self.instr_tax_impl(),
             OpCode::TayImpl => self.instr_tay_impl(),
-            OpCode::TsxImpl => (),
+            OpCode::TsxImpl => self.instr_tsx_impl(),
             OpCode::TxaImpl => self.instr_txa_impl(),
-            OpCode::TxsImpl => (),
+            OpCode::TxsImpl => self.instr_txs_impl(),
             OpCode::TyaImpl => self.instr_tya_impl(),
         }
     }

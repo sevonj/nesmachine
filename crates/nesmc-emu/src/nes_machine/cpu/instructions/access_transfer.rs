@@ -161,15 +161,50 @@ impl Cpu {
         self.set_negative(self.y);
     }
 
+    pub(super) fn instr_tsx_impl(&mut self) {
+        self.x = self.sp;
+        self.set_zero(self.x);
+        self.set_negative(self.x);
+    }
+
     pub(super) fn instr_txa_impl(&mut self) {
         self.a = self.x;
         self.set_zero(self.a);
         self.set_negative(self.a);
     }
 
+    pub(super) fn instr_txs_impl(&mut self) {
+        self.sp = self.x;
+    }
+
     pub(super) fn instr_tya_impl(&mut self) {
         self.a = self.y;
         self.set_zero(self.a);
         self.set_negative(self.a);
+    }
+
+    /// Push A to stack
+    pub(super) fn instr_pha_impl(&mut self, bus: &mut Bus) {
+        self.push_stack(self.a, bus);
+    }
+
+    /// Pull A from stack
+    pub(super) fn instr_pla_impl(&mut self, bus: &mut Bus) {
+        self.a = self.pop_stack(bus);
+        self.set_zero(self.a);
+        self.set_negative(self.a);
+    }
+
+    /// Push status to stack
+    pub(super) fn instr_php_impl(&mut self, bus: &mut Bus) {
+        const BRK_FLAG: u8 = 0x10;
+        let value = u8::from(self.status) | BRK_FLAG;
+        self.push_stack(value, bus);
+    }
+
+    /// Pull status from stack
+    pub(super) fn instr_plp_impl(&mut self, bus: &mut Bus) {
+        self.a = self.pop_stack(bus);
+        // TODO: I flag should be delayed by 1 inst
     }
 }
