@@ -63,12 +63,6 @@ impl Cpu {
         bus.read(address)
     }
 
-    pub(super) fn fetch_operand_zpgy(&mut self, bus: &mut Bus) -> u8 {
-        let address = bus.read(self.pc).wrapping_add(self.y) as u16;
-        self.inc_pc();
-        bus.read(address)
-    }
-
     pub(crate) fn fetch_address_abs(&mut self, bus: &mut Bus) -> u16 {
         let address = read_u16(bus, self.pc);
         self.inc_pc();
