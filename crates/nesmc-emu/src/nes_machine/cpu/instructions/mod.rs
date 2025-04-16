@@ -1,6 +1,7 @@
 mod access_transfer;
 mod arithmetic;
 mod bitwise;
+mod comparison;
 mod shift;
 
 use nesmc_types::instruction::OpCode;
@@ -50,20 +51,20 @@ impl Cpu {
             OpCode::CldImpl => (),
             OpCode::CliImpl => (),
             OpCode::ClvImpl => (),
-            OpCode::CmpAbs => (),
-            OpCode::CmpAbsX => (),
-            OpCode::CmpAbsY => (),
-            OpCode::CmpImm => (),
-            OpCode::CmpIndY => (),
-            OpCode::CmpXInd => (),
-            OpCode::CmpZpg => (),
-            OpCode::CmpZpgX => (),
-            OpCode::CpxAbs => (),
-            OpCode::CpxImm => (),
-            OpCode::CpxZpg => (),
-            OpCode::CpyAbs => (),
-            OpCode::CpyImm => (),
-            OpCode::CpyZpg => (),
+            OpCode::CmpAbs => self.instr_cmp_abs(bus),
+            OpCode::CmpAbsX => self.instr_cmp_absx(bus),
+            OpCode::CmpAbsY => self.instr_cmp_absy(bus),
+            OpCode::CmpImm => self.instr_cmp_imm(bus),
+            OpCode::CmpIndY => self.instr_cmp_indy(bus),
+            OpCode::CmpXInd => self.instr_cmp_xind(bus),
+            OpCode::CmpZpg => self.instr_cmp_zpg(bus),
+            OpCode::CmpZpgX => self.instr_cmp_zpgx(bus),
+            OpCode::CpxAbs => self.instr_cpx_abs(bus),
+            OpCode::CpxImm => self.instr_cpx_imm(bus),
+            OpCode::CpxZpg => self.instr_cpx_zpg(bus),
+            OpCode::CpyAbs => self.instr_cpy_abs(bus),
+            OpCode::CpyImm => self.instr_cpy_imm(bus),
+            OpCode::CpyZpg => self.instr_cpy_zpg(bus),
             OpCode::DecAbs => self.instr_dec_abs(bus),
             OpCode::DecAbsX => self.instr_dec_absx(bus),
             OpCode::DecZpg => self.instr_dec_zpg(bus),
