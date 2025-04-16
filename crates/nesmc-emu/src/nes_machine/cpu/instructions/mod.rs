@@ -1,6 +1,7 @@
 mod access_transfer;
 mod arithmetic;
 mod bitwise;
+mod branching;
 mod comparison;
 mod shift;
 
@@ -36,17 +37,17 @@ impl Cpu {
             OpCode::AslAbsX => self.instr_asl_absx(bus),
             OpCode::AslZpg => self.instr_asl_zpg(bus),
             OpCode::AslZpgX => self.instr_asl_zpgx(bus),
-            OpCode::BccRel => (),
-            OpCode::BcsRel => (),
-            OpCode::BeqRel => (),
+            OpCode::BccRel => self.instr_bcc_rel(bus),
+            OpCode::BcsRel => self.instr_bcs_rel(bus),
+            OpCode::BeqRel => self.instr_beq_rel(bus),
             OpCode::BitAbs => self.instr_bit_abs(bus),
             OpCode::BitZpg => self.instr_bit_zpg(bus),
-            OpCode::BmiRel => (),
-            OpCode::BneRel => (),
-            OpCode::BplRel => (),
+            OpCode::BmiRel => self.instr_bmi_rel(bus),
+            OpCode::BneRel => self.instr_bne_rel(bus),
+            OpCode::BplRel => self.instr_bpl_rel(bus),
             OpCode::BrkImpl => (),
-            OpCode::BvcRel => (),
-            OpCode::BvsRel => (),
+            OpCode::BvcRel => self.instr_bvc_rel(bus),
+            OpCode::BvsRel => self.instr_bvs_rel(bus),
             OpCode::ClcImpl => (),
             OpCode::CldImpl => (),
             OpCode::CliImpl => (),
