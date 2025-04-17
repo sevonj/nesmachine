@@ -76,7 +76,12 @@ impl Operand {
             | OpCode::NopAbs
             | OpCode::LaxAbs
             | OpCode::SaxAbs
-            | OpCode::DcpAbs => {
+            | OpCode::DcpAbs
+            | OpCode::IscAbs
+            | OpCode::SloAbs
+            | OpCode::RlaAbs
+            | OpCode::SreAbs
+            | OpCode::RraAbs => {
                 let l = machine.bus.read(addr.wrapping_add(1)) as u16;
                 let h = machine.bus.read(addr.wrapping_add(2)) as u16;
                 Self::Abs((h << 8) + l)
@@ -98,7 +103,12 @@ impl Operand {
             | OpCode::SbcAbsX
             | OpCode::StaAbsX
             | OpCode::NopAbsX
-            | OpCode::DcpAbsX => {
+            | OpCode::DcpAbsX
+            | OpCode::IscAbsX
+            | OpCode::SloAbsX
+            | OpCode::RlaAbsX
+            | OpCode::SreAbsX
+            | OpCode::RraAbsX => {
                 let l = machine.bus.read(addr.wrapping_add(1)) as u16;
                 let h = machine.bus.read(addr.wrapping_add(2)) as u16;
                 Self::AbsX((h << 8) + l)
@@ -114,7 +124,12 @@ impl Operand {
             | OpCode::SbcAbsY
             | OpCode::StaAbsY
             | OpCode::LaxAbsY
-            | OpCode::DcpAbsY => {
+            | OpCode::DcpAbsY
+            | OpCode::IscAbsY
+            | OpCode::SloAbsY
+            | OpCode::RlaAbsY
+            | OpCode::SreAbsY
+            | OpCode::RraAbsY => {
                 let l = machine.bus.read(addr.wrapping_add(1)) as u16;
                 let h = machine.bus.read(addr.wrapping_add(2)) as u16;
                 Self::AbsY((h << 8) + l)
@@ -175,8 +190,13 @@ impl Operand {
             | OpCode::SbcXInd
             | OpCode::StaXInd
             | OpCode::LaxXInd
-            | OpCode::SaxXind
-            | OpCode::DcpXInd => Self::XInd(machine.bus.read(addr.wrapping_add(1))),
+            | OpCode::SaxXInd
+            | OpCode::DcpXInd
+            | OpCode::IscXInd
+            | OpCode::SloXInd
+            | OpCode::RlaXInd
+            | OpCode::SreXInd
+            | OpCode::RraXInd => Self::XInd(machine.bus.read(addr.wrapping_add(1))),
 
             OpCode::AdcIndY
             | OpCode::AndIndY
@@ -187,7 +207,12 @@ impl Operand {
             | OpCode::SbcIndY
             | OpCode::StaIndY
             | OpCode::LaxIndY
-            | OpCode::DcpIndY => Self::IndY(machine.bus.read(addr.wrapping_add(1))),
+            | OpCode::DcpIndY
+            | OpCode::IscIndY
+            | OpCode::SloIndY
+            | OpCode::RlaIndY
+            | OpCode::SreIndY
+            | OpCode::RraIndY => Self::IndY(machine.bus.read(addr.wrapping_add(1))),
 
             OpCode::BccRel
             | OpCode::BcsRel
@@ -222,7 +247,12 @@ impl Operand {
             | OpCode::NopZpg
             | OpCode::LaxZpg
             | OpCode::SaxZpg
-            | OpCode::DcpZpg => Self::Zpg(machine.bus.read(addr.wrapping_add(1))),
+            | OpCode::DcpZpg
+            | OpCode::IscZpg
+            | OpCode::SloZpg
+            | OpCode::RlaZpg
+            | OpCode::SreZpg
+            | OpCode::RraZpg => Self::Zpg(machine.bus.read(addr.wrapping_add(1))),
 
             OpCode::AdcZpgX
             | OpCode::AndZpgX
@@ -241,7 +271,12 @@ impl Operand {
             | OpCode::StaZpgX
             | OpCode::StyZpgX
             | OpCode::NopZpgX
-            | OpCode::DcpZpgX => Self::ZpgX(machine.bus.read(addr.wrapping_add(1))),
+            | OpCode::DcpZpgX
+            | OpCode::IscZpgX
+            | OpCode::SloZpgX
+            | OpCode::RlaZpgX
+            | OpCode::SreZpgX
+            | OpCode::RraZpgX => Self::ZpgX(machine.bus.read(addr.wrapping_add(1))),
 
             OpCode::LdxZpgY | OpCode::StxZpgY | OpCode::LaxZpgY | OpCode::SaxZpgY => {
                 Self::ZpgY(machine.bus.read(addr.wrapping_add(1)))

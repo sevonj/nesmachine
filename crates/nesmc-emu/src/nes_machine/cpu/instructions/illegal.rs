@@ -105,4 +105,207 @@ impl Cpu {
         let addr = self.fetch_address_zpgx(bus);
         self.instr_dcp(bus, addr);
     }
+
+    fn instr_isc(&mut self, bus: &mut Bus, addr: u16) {
+        let value = bus.read(addr).wrapping_add(1);
+        bus.write(addr, value);
+
+        let carry = if self.status.c { 1 } else { 0 };
+        let result = self.a.overflowing_add(!value).0;
+        let result = result.overflowing_add(carry).0;
+        self.status.c = result <= self.a;
+        self.set_zero(result);
+        self.set_negative(result);
+        self.set_overflow(!value, result);
+        self.a = result;
+    }
+    pub(super) fn instr_isc_abs(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_abs(bus);
+        self.instr_isc(bus, addr);
+    }
+    pub(super) fn instr_isc_absx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absx(bus);
+        self.instr_isc(bus, addr);
+    }
+    pub(super) fn instr_isc_absy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absy(bus);
+        self.instr_isc(bus, addr);
+    }
+    pub(super) fn instr_isc_xind(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_xind(bus);
+        self.instr_isc(bus, addr);
+    }
+    pub(super) fn instr_isc_indy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_indy(bus);
+        self.instr_isc(bus, addr);
+    }
+    pub(super) fn instr_isc_zpg(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpg(bus);
+        self.instr_isc(bus, addr);
+    }
+    pub(super) fn instr_isc_zpgx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpgx(bus);
+        self.instr_isc(bus, addr);
+    }
+
+    fn instr_slo(&mut self, bus: &mut Bus, addr: u16) {
+        let value = bus.read(addr);
+        self.status.c = value & 0x80 != 0;
+        let result = value << 1;
+        bus.write(addr, result);
+        self.a |= result;
+        self.set_zero(self.a);
+        self.set_negative(self.a);
+    }
+    pub(super) fn instr_slo_abs(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_abs(bus);
+        self.instr_slo(bus, addr);
+    }
+    pub(super) fn instr_slo_absx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absx(bus);
+        self.instr_slo(bus, addr);
+    }
+    pub(super) fn instr_slo_absy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absy(bus);
+        self.instr_slo(bus, addr);
+    }
+    pub(super) fn instr_slo_xind(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_xind(bus);
+        self.instr_slo(bus, addr);
+    }
+    pub(super) fn instr_slo_indy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_indy(bus);
+        self.instr_slo(bus, addr);
+    }
+    pub(super) fn instr_slo_zpg(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpg(bus);
+        self.instr_slo(bus, addr);
+    }
+    pub(super) fn instr_slo_zpgx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpgx(bus);
+        self.instr_slo(bus, addr);
+    }
+
+    fn instr_rla(&mut self, bus: &mut Bus, addr: u16) {
+        let data = bus.read(addr);
+        let carry = if self.status.c { 1 } else { 0 };
+        let shifted = (data << 1) | carry;
+        self.status.c = data & 0x80 != 0;
+        bus.write(addr, shifted);
+        let result = self.a & shifted;
+        self.set_zero(result);
+        self.set_negative(result);
+        self.a = result;
+    }
+    pub(super) fn instr_rla_abs(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_abs(bus);
+        self.instr_rla(bus, addr);
+    }
+    pub(super) fn instr_rla_absx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absx(bus);
+        self.instr_rla(bus, addr);
+    }
+    pub(super) fn instr_rla_absy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absy(bus);
+        self.instr_rla(bus, addr);
+    }
+    pub(super) fn instr_rla_xind(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_xind(bus);
+        self.instr_rla(bus, addr);
+    }
+    pub(super) fn instr_rla_indy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_indy(bus);
+        self.instr_rla(bus, addr);
+    }
+    pub(super) fn instr_rla_zpg(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpg(bus);
+        self.instr_rla(bus, addr);
+    }
+    pub(super) fn instr_rla_zpgx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpgx(bus);
+        self.instr_rla(bus, addr);
+    }
+
+    fn instr_rra(&mut self, bus: &mut Bus, addr: u16) {
+        let value = bus.read(addr);
+        let carry = if self.status.c { 0x80 } else { 0 };
+        let shifted = (value >> 1) | carry;
+        self.status.c = value & 0x01 != 0;
+        bus.write(addr, shifted);
+
+        let carry = if self.status.c { 1 } else { 0 };
+        let (result, ov1) = self.a.overflowing_add(shifted); // add data
+        let (result, ov2) = result.overflowing_add(carry); // add carry from previous operation
+        self.status.c = ov1 || ov2;
+        self.set_zero(result);
+        self.set_negative(result);
+        self.set_overflow(shifted, result);
+        self.a = result;
+    }
+    pub(super) fn instr_rra_abs(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_abs(bus);
+        self.instr_rra(bus, addr);
+    }
+    pub(super) fn instr_rra_absx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absx(bus);
+        self.instr_rra(bus, addr);
+    }
+    pub(super) fn instr_rra_absy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absy(bus);
+        self.instr_rra(bus, addr);
+    }
+    pub(super) fn instr_rra_xind(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_xind(bus);
+        self.instr_rra(bus, addr);
+    }
+    pub(super) fn instr_rra_indy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_indy(bus);
+        self.instr_rra(bus, addr);
+    }
+    pub(super) fn instr_rra_zpg(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpg(bus);
+        self.instr_rra(bus, addr);
+    }
+    pub(super) fn instr_rra_zpgx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpgx(bus);
+        self.instr_rra(bus, addr);
+    }
+
+    fn instr_sre(&mut self, bus: &mut Bus, addr: u16) {
+        let data = bus.read(addr);
+        let result = data >> 1;
+        bus.write(addr, result);
+        self.a ^= result;
+        self.set_zero(self.a);
+        self.set_negative(self.a);
+        self.status.c = data & 0x01 != 0;
+    }
+    pub(super) fn instr_sre_abs(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_abs(bus);
+        self.instr_sre(bus, addr);
+    }
+    pub(super) fn instr_sre_absx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absx(bus);
+        self.instr_sre(bus, addr);
+    }
+    pub(super) fn instr_sre_absy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_absy(bus);
+        self.instr_sre(bus, addr);
+    }
+    pub(super) fn instr_sre_xind(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_xind(bus);
+        self.instr_sre(bus, addr);
+    }
+    pub(super) fn instr_sre_indy(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_indy(bus);
+        self.instr_sre(bus, addr);
+    }
+    pub(super) fn instr_sre_zpg(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpg(bus);
+        self.instr_sre(bus, addr);
+    }
+    pub(super) fn instr_sre_zpgx(&mut self, bus: &mut Bus) {
+        let addr = self.fetch_address_zpgx(bus);
+        self.instr_sre(bus, addr);
+    }
 }
