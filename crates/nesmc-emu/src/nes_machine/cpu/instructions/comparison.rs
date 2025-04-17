@@ -22,62 +22,76 @@ impl Cpu {
         self.set_negative(result);
     }
 
-    pub(super) fn instr_cmp_abs(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cmp_abs(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_abs(bus);
         self.instr_cmp(value);
+        4
     }
-    pub(super) fn instr_cmp_absx(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cmp_absx(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_absx(bus);
         self.instr_cmp(value);
+        4
     }
-    pub(super) fn instr_cmp_absy(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cmp_absy(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_absy(bus);
         self.instr_cmp(value);
+        4
     }
-    pub(super) fn instr_cmp_imm(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cmp_imm(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_imm(bus);
         self.instr_cmp(value);
+        2
     }
-    pub(super) fn instr_cmp_xind(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cmp_xind(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_xind(bus);
         self.instr_cmp(value);
+        6
     }
-    pub(super) fn instr_cmp_indy(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cmp_indy(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_indy(bus);
         self.instr_cmp(value);
+        5
     }
-    pub(super) fn instr_cmp_zpg(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cmp_zpg(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_zpg(bus);
         self.instr_cmp(value);
+        3
     }
-    pub(super) fn instr_cmp_zpgx(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cmp_zpgx(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_zpgx(bus);
         self.instr_cmp(value);
+        4
     }
 
-    pub(super) fn instr_cpx_abs(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cpx_abs(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_abs(bus);
         self.instr_cpx(value);
+        4
     }
-    pub(super) fn instr_cpx_imm(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cpx_imm(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_imm(bus);
         self.instr_cpx(value);
+        2
     }
-    pub(super) fn instr_cpx_zpg(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cpx_zpg(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_zpg(bus);
         self.instr_cpx(value);
+        3
     }
 
-    pub(super) fn instr_cpy_abs(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cpy_abs(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_abs(bus);
         self.instr_cpy(value);
+        4
     }
-    pub(super) fn instr_cpy_imm(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cpy_imm(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_imm(bus);
         self.instr_cpy(value);
+        2
     }
-    pub(super) fn instr_cpy_zpg(&mut self, bus: &mut Bus) {
+    pub(super) fn instr_cpy_zpg(&mut self, bus: &mut Bus) -> usize {
         let value = self.fetch_operand_zpg(bus);
         self.instr_cpy(value);
+        3
     }
 }

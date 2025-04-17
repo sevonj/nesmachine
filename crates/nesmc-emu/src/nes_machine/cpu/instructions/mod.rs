@@ -14,11 +14,12 @@ use crate::bus::Bus;
 use super::Cpu;
 
 impl Cpu {
-    pub(super) fn exec_instruction(&mut self, bus: &mut Bus, op_code: OpCode) {
+    /// Returns the number of CPU cycles spent.
+    pub(super) fn exec_instruction(&mut self, bus: &mut Bus, op_code: OpCode) -> usize {
         match op_code {
             // Illegal
-            OpCode::Illegal(_) => (),
-            OpCode::Jam => (),
+            OpCode::Illegal(_) => 0,
+            OpCode::Jam => 0,
             OpCode::NopImm => self.instr_nop_imm(bus),
             OpCode::NopAbs => self.instr_nop_abs(bus),
             OpCode::NopAbsX => self.instr_nop_absx(bus),
@@ -232,7 +233,7 @@ impl Cpu {
         }
     }
 
-    fn instr_nop_impl(&self) {
-        // waste of time
+    fn instr_nop_impl(&self) -> usize {
+        2
     }
 }

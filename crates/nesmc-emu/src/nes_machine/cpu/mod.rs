@@ -50,7 +50,8 @@ impl Cpu {
     }
 
     /// Step one CPU instruction
-    pub fn step(&mut self, bus: &mut Bus) {
+    /// Returns the number of CPU cycles spent.
+    pub fn step(&mut self, bus: &mut Bus) -> usize {
         // vblank interrupt
         /*let ppu_status = bus.read(0x2002);
         if ppu_status & 0b1000_0000 != 0 {

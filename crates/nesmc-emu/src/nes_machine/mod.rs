@@ -12,6 +12,7 @@ pub use error::NesMachineError;
 pub struct NesMachine {
     pub bus: Bus,
     pub cpu: Cpu,
+    pub cycle_count: usize,
 }
 
 impl Default for NesMachine {
@@ -19,7 +20,11 @@ impl Default for NesMachine {
         let bus = Bus::default();
         let cpu = Cpu::new(&bus);
 
-        Self { bus, cpu }
+        Self {
+            bus,
+            cpu,
+            cycle_count: 7,
+        }
     }
 }
 
@@ -39,7 +44,7 @@ impl NesMachine {
 
     /// Step one CPU instruction
     pub fn step(&mut self) {
-        self.cpu.step(&mut self.bus);
+        self.cycle_count += self.cpu.step(&mut self.bus);
     }
 }
 
@@ -61,7 +66,16 @@ mod tests {
         }
     }
 
-    fn run_against_log(machine: &mut NesMachine, log: String, fail_on_mismatch: bool) {
+    fn parse_cycles(line: &str) -> usize {
+        usize::from_str_radix(&line[90..], 10).unwrap()
+    }
+
+    fn run_against_log(
+        machine: &mut NesMachine,
+        log: String,
+        fail_on_mismatch: bool,
+        cycle_accurate: bool,
+    ) {
         for (i, line) in log.lines().enumerate() {
             let ln = i + 1;
 
@@ -69,15 +83,19 @@ mod tests {
                 println!("0x0078:{:02x}", machine.bus.read(0x78));
             }
 
-            let reference_cpu = parse_cpu(line);
-            if (reference_cpu != machine.cpu) && fail_on_mismatch {
-                panic!(
-                    "ln {ln:02} CPU STATE MISMATCH\n    ref: {reference_cpu}\n    got: {}\n",
-                    machine.cpu
-                );
+            let ref_cpu = parse_cpu(line);
+            let ref_cyc = parse_cycles(line);
+            let this_cpu = &machine.cpu;
+            let this_cyc = machine.cycle_count;
+
+            if fail_on_mismatch && (ref_cpu != *this_cpu) {
+                panic!("ln {ln:02} CPU STATE MISMATCH\n    ref: {ref_cpu}\n    got: {this_cpu}\n",);
+            }
+            if cycle_accurate && (this_cyc != ref_cyc) {
+                panic!("Cycle mismach\n    ref: {ref_cyc}\n    got: {this_cyc}\n");
             }
 
-            println!("ln {ln:02} ok - {}", machine.cpu);
+            println!("ln {ln:02} ok - {this_cpu} CYC:{this_cyc}");
             machine.step();
         }
     }
@@ -89,7 +107,17 @@ mod tests {
         machine.cpu.pc = 0xc000;
 
         let log = read_to_string("../../tests/nestest_c000.log").unwrap();
-        run_against_log(&mut machine, log, true);
+        run_against_log(&mut machine, log, true, false);
+    }
+
+    #[test]
+    fn run_nestest_c000_log_cycles() {
+        let mut machine = NesMachine::default();
+        machine.open("../../tests/nestest.nes").unwrap();
+        machine.cpu.pc = 0xc000;
+
+        let log = read_to_string("../../tests/nestest_c000.log").unwrap();
+        run_against_log(&mut machine, log, true, true);
     }
 
     /*
