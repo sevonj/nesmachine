@@ -42,7 +42,7 @@ impl MemBrowser {
 
         let table_area_response = ui
             .vertical(|ui| {
-                let available_h = ui.available_height();
+                let max_h = ui.available_height() + ui.next_widget_position().y;
 
                 let tablebuider = TableBuilder::new(ui)
                     .column(Column::exact(W_TYPE_COL))
@@ -82,7 +82,7 @@ impl MemBrowser {
                                 row.col(|_| {});
                                 row.col(|_| {});
                                 row.col(|ui| {
-                                    if ui.next_widget_position().y >= available_h {
+                                    if ui.next_widget_position().y >= max_h {
                                         bail = true;
                                     }
                                 });
@@ -119,7 +119,7 @@ impl MemBrowser {
                                 }
                                 ui.add(Label::new(text).wrap_mode(TextWrapMode::Truncate));
 
-                                if ui.next_widget_position().y >= available_h {
+                                if ui.next_widget_position().y >= max_h {
                                     bail = true;
                                 }
                             });
