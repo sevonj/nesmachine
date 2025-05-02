@@ -1,10 +1,14 @@
-use super::Device;
+use super::CpuDevice;
 
 #[derive(Debug, Default)]
-pub struct APU;
+pub struct Apu;
 
-impl Device for APU {
-    fn read(&self, _addr: u16) -> u8 {
+impl CpuDevice for Apu {
+    fn read(&mut self, _addr: u16) -> u8 {
+        0
+    }
+
+    fn read_immutable(&self, _addr: u16) -> u8 {
         0
     }
 

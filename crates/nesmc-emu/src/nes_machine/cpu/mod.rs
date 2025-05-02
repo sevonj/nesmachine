@@ -31,7 +31,7 @@ impl std::fmt::Display for Cpu {
 impl Cpu {
     const INIT_VECTOR: u16 = 0xfffc;
 
-    pub fn new(bus: &Bus) -> Self {
+    pub fn new(bus: &mut Bus) -> Self {
         Self {
             a: 0,
             x: 0,
@@ -43,7 +43,7 @@ impl Cpu {
     }
 
     /// Reset button behavior
-    pub fn reset(&mut self, bus: &Bus) {
+    pub fn reset(&mut self, bus: &mut Bus) {
         self.pc = read_u16(bus, Self::INIT_VECTOR);
         self.sp = self.sp.wrapping_sub(3);
         self.status.reset();
@@ -81,7 +81,7 @@ impl Cpu {
     }
 }
 
-fn read_u16(bus: &Bus, addr: u16) -> u16 {
+fn read_u16(bus: &mut Bus, addr: u16) -> u16 {
     let lo_byte = bus.read(addr) as u16;
     let hi_byte = bus.read(addr.wrapping_add(1)) as u16;
     (hi_byte << 8) | lo_byte

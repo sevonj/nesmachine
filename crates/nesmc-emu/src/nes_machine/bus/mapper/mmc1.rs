@@ -1,28 +1,6 @@
-use super::MapperIo;
+use super::{MapperIo, NametableArrangement};
 
 const KIB: usize = 1024;
-
-#[derive(Debug)]
-enum NametableArrangement {
-    OneScreenLower,
-    OneScreenUpper,
-    /// Vertical mirroring
-    HorizontalArrangement,
-    /// Horizontal mirroring
-    VerticalArrangement,
-}
-
-impl NametableArrangement {
-    pub fn from_sr_byte(value: u8) -> Self {
-        match value | 0x03 {
-            0 => Self::OneScreenLower,
-            1 => Self::OneScreenUpper,
-            2 => Self::HorizontalArrangement,
-            3 => Self::VerticalArrangement,
-            _ => unreachable!(),
-        }
-    }
-}
 
 #[derive(Debug)]
 enum PrgBankMode {
@@ -204,7 +182,7 @@ impl Mmc1 {
 }
 
 impl MapperIo for Mmc1 {
-    fn read(&self, addr: u16) -> u8 {
+    fn read_cpu(&self, addr: u16) -> u8 {
         match addr {
             0x0000..=0x5fff => 0,
             0x6000..=0x7fff => self.read_prg_ram(addr),
@@ -212,10 +190,24 @@ impl MapperIo for Mmc1 {
         }
     }
 
-    fn write(&mut self, addr: u16, _value: u8) {
+    fn write_cpu(&mut self, addr: u16, _value: u8) {
         match addr {
             0x0000..=0x7fff => (),
             0x8000..=0xffff => todo!(),
         }
+    }
+
+    fn read_ppu(&self, addr: u16) -> u8 {
+        let _addr = self.arrangement.map_addr(addr);
+        todo!()
+    }
+
+    fn write_ppu(&mut self, addr: u16, _value: u8) {
+        let _addr = self.arrangement.map_addr(addr);
+        todo!()
+    }
+
+    fn arrangement(&self) -> NametableArrangement {
+        self.arrangement
     }
 }

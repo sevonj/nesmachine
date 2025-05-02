@@ -1,28 +1,33 @@
 pub mod bus;
 mod cpu;
 mod error;
+mod ppu;
 
 use std::path::Path;
 
 use bus::{Bus, Mapper};
 use cpu::Cpu;
 pub use error::NesMachineError;
+use ppu::Ppu;
 
 #[derive(Debug)]
 pub struct NesMachine {
     pub bus: Bus,
     pub cpu: Cpu,
+    pub ppu: Ppu,
     pub cycle_count: usize,
 }
 
 impl Default for NesMachine {
     fn default() -> Self {
-        let bus = Bus::default();
-        let cpu = Cpu::new(&bus);
+        let mut bus = Bus::default();
+        let cpu = Cpu::new(&mut bus);
+        let ppu = Ppu::default();
 
         Self {
             bus,
             cpu,
+            ppu,
             cycle_count: 7,
         }
     }
@@ -32,19 +37,25 @@ impl NesMachine {
     pub fn open<P: AsRef<Path>>(&mut self, path: P) -> Result<(), NesMachineError> {
         self.bus.cart = Mapper::None;
         self.bus.cart = Mapper::open(path)?;
-        self.cpu = Cpu::new(&self.bus);
+        self.cpu = Cpu::new(&mut self.bus);
         Ok(())
     }
 
     /// Reset button behavior
     pub fn reset(&mut self) {
         self.bus.reset();
-        self.cpu.reset(&self.bus);
+        self.cpu.reset(&mut self.bus);
+        self.ppu.reset();
     }
 
     /// Step one CPU instruction
     pub fn step(&mut self) {
         self.cycle_count += self.cpu.step(&mut self.bus);
+
+        while self.cycle_count >= 3 {
+            self.ppu.step(&mut self.bus);
+            self.cycle_count -= 3;
+        }
     }
 }
 

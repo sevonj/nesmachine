@@ -12,7 +12,7 @@ pub struct DisassInst {
 
 impl DisassInst {
     pub fn from_read_machine(machine: &NesMachine, addr: u16) -> Self {
-        let op_code = OpCode::from(machine.bus.read(addr));
+        let op_code = OpCode::from(machine.bus.read_immutable(addr));
         let operand = Operand::from_read_machine(op_code, machine, addr);
         Self { op_code, operand }
     }

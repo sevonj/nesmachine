@@ -3,6 +3,7 @@ use std::ops::RangeInclusive;
 use egui::{Button, Frame, Response, SidePanel, Slider, Ui, Vec2, Widget, style::HandleShape};
 
 pub struct ScrollSlider<'a> {
+    id: String,
     value: &'a mut usize,
     range: RangeInclusive<usize>,
 }
@@ -11,14 +12,22 @@ const W_OUTER: f32 = 22.;
 const BUTTON_SIZE: Vec2 = Vec2 { x: 16., y: 16. };
 
 impl<'a> ScrollSlider<'a> {
-    pub fn vertical(value: &'a mut usize, range: RangeInclusive<usize>) -> Self {
-        Self { value, range }
+    pub fn vertical<S: Into<String>>(
+        value: &'a mut usize,
+        range: RangeInclusive<usize>,
+        id: S,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            value,
+            range,
+        }
     }
 }
 
 impl Widget for ScrollSlider<'_> {
     fn ui(self, ui: &mut Ui) -> Response {
-        let response = SidePanel::right("scroll_slider")
+        let response = SidePanel::right(self.id)
             .exact_width(W_OUTER)
             .frame(Frame::NONE.inner_margin(2.))
             .resizable(false)

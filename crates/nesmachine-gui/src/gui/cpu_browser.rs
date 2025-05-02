@@ -14,14 +14,14 @@ const H_ROW: f32 = 16.;
 const MAX_ADDR: usize = 0xffff;
 
 #[derive(Debug)]
-pub struct MemBrowser {
+pub struct CpuBrowser {
     /// Because of egui slider quirks, this is the offset from the **end**.
     /// 0xffff means the top, address 0x0.
     slider_pos: usize,
     follow_pc: bool,
 }
 
-impl Default for MemBrowser {
+impl Default for CpuBrowser {
     fn default() -> Self {
         Self {
             slider_pos: MAX_ADDR,
@@ -30,13 +30,13 @@ impl Default for MemBrowser {
     }
 }
 
-impl MemBrowser {
+impl CpuBrowser {
     pub fn draw(&mut self, ui: &mut Ui, machine: &mut NesMachine) {
         self.draw_sidebar(ui, machine);
 
         ui.add_enabled(
             !self.follow_pc,
-            ScrollSlider::vertical(&mut self.slider_pos, 0..=MAX_ADDR),
+            ScrollSlider::vertical(&mut self.slider_pos, 0..=MAX_ADDR, "cpu_browser_scrollbar"),
         );
         self.slider_pos = self.slider_pos.clamp(0, MAX_ADDR);
 
@@ -147,7 +147,7 @@ impl MemBrowser {
     }
 
     fn draw_sidebar(&mut self, ui: &mut Ui, machine: &NesMachine) {
-        SidePanel::right("mem_browser_sidebar")
+        SidePanel::right("cpu_browser")
             .resizable(false)
             .show_inside(ui, |ui| {
                 ui.checkbox(&mut self.follow_pc, "Follow PC");

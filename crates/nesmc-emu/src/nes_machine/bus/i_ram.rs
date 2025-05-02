@@ -1,5 +1,6 @@
-use super::Device;
+use super::CpuDevice;
 
+/// CPU Internal RAM
 #[derive(Debug)]
 pub struct IRam([u8; Self::SIZE]);
 
@@ -17,8 +18,12 @@ impl Default for IRam {
     }
 }
 
-impl Device for IRam {
-    fn read(&self, addr: u16) -> u8 {
+impl CpuDevice for IRam {
+    fn read(&mut self, addr: u16) -> u8 {
+        self.0[addr as usize % Self::SIZE]
+    }
+
+    fn read_immutable(&self, addr: u16) -> u8 {
         self.0[addr as usize % Self::SIZE]
     }
 
