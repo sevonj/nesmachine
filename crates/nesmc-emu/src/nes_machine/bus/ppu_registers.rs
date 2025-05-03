@@ -259,13 +259,12 @@ impl PpuRegisters {
     fn write_ppuaddr(&mut self, value: u8) {
         let value = value as u16;
         if self.ppu_addr_last_msb {
-            self.ppu_addr &= 0x00ff;
+            self.ppu_addr &= 0xff00;
             self.ppu_addr += value;
         } else {
-            self.ppu_addr &= 0xff00;
+            self.ppu_addr &= 0x00ff;
             self.ppu_addr += value << 8;
         }
-
         self.ppu_addr_last_msb = !self.ppu_addr_last_msb;
     }
 
