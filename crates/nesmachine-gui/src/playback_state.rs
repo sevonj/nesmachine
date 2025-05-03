@@ -1,4 +1,4 @@
-use std::time::Instant;
+use std::{collections::HashSet, time::Instant};
 
 #[derive(Debug)]
 pub enum PlaybackCommand {
@@ -13,6 +13,7 @@ pub struct PlaybackState {
     pub paused: bool,
     pub command: Option<PlaybackCommand>,
     pub t_last_frame: Instant,
+    pub breakpoints: HashSet<u16>,
 }
 
 impl Default for PlaybackState {
@@ -21,6 +22,7 @@ impl Default for PlaybackState {
             paused: true,
             command: None,
             t_last_frame: Instant::now(),
+            breakpoints: HashSet::new(),
         }
     }
 }

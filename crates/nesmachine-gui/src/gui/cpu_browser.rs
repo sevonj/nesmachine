@@ -1,15 +1,20 @@
-use egui::{DragValue, Label, RichText, SidePanel, TextWrapMode, Ui};
+use egui::{
+    Color32, DragValue, Label, RichText, Sense, SidePanel, Stroke, TextWrapMode, Ui, Vec2,
+    epaint::CircleShape, vec2,
+};
 use egui_extras::{Column, TableBuilder};
 use nesmc_disassembler::{cpu_addresses::CpuAddressKind, instruction::DisassInst};
 use nesmc_emu::NesMachine;
 
 use super::components::ScrollSlider;
+use crate::playback_state::PlaybackState;
 
 const W_TYPE_COL: f32 = 52.;
 const W_ADDR_COL: f32 = 48.;
 const W_VALUE_COL: f32 = 48.;
 const H_HEADER: f32 = 24.;
 const H_ROW: f32 = 16.;
+const BREAKPOINT_COL: Color32 = Color32::from_rgb(178, 34, 34);
 
 const MAX_ADDR: usize = 0xffff;
 
@@ -31,7 +36,7 @@ impl Default for CpuBrowser {
 }
 
 impl CpuBrowser {
-    pub fn draw(&mut self, ui: &mut Ui, machine: &mut NesMachine) {
+    pub fn draw(&mut self, ui: &mut Ui, machine: &mut NesMachine, playback: &mut PlaybackState) {
         self.draw_sidebar(ui, machine);
 
         ui.add_enabled(
@@ -100,9 +105,44 @@ impl CpuBrowser {
                             });
 
                             row.col(|ui| {
-                                let text = format!("{addr:#06x}");
+                                ui.horizontal(|ui| {
+                                    // Breakpoint dot
+                                    let dot_diam = 8.0;
+                                    let dot_size = Vec2::new(dot_diam, dot_diam);
+                                    let dot_pos =
+                                        ui.next_widget_position() + vec2(dot_diam / 2.0, 0.);
+                                    let dot_resp = ui.allocate_exact_size(dot_size, Sense::all());
 
-                                ui.label(RichText::new(text).monospace());
+                                    let text = format!("{addr:#06x}");
+                                    let text_resp = ui.label(RichText::new(text).monospace());
+
+                                    let addr = addr as u16;
+
+                                    if dot_resp.1.hovered() || text_resp.hovered() {
+                                        let shape = CircleShape::stroke(
+                                            dot_pos,
+                                            dot_diam / 2.,
+                                            Stroke::new(2., BREAKPOINT_COL),
+                                        );
+                                        ui.painter().add(shape);
+                                    }
+                                    if playback.breakpoints.contains(&addr) {
+                                        let shape = CircleShape::filled(
+                                            dot_pos,
+                                            dot_diam / 2.,
+                                            BREAKPOINT_COL,
+                                        );
+                                        ui.painter().add(shape);
+                                    }
+
+                                    if dot_resp.1.clicked() || text_resp.clicked() {
+                                        if playback.breakpoints.contains(&addr) {
+                                            playback.breakpoints.remove(&addr);
+                                        } else {
+                                            playback.breakpoints.insert(addr);
+                                        }
+                                    }
+                                });
                             });
 
                             row.col(|ui| {

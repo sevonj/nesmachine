@@ -1,13 +1,13 @@
 mod gui;
 mod playback_state;
 
-use std::time::{Duration, Instant};
 use eframe::egui;
 use egui::{CentralPanel, Frame, Ui, vec2};
 use egui_tiles::{Behavior, LinearDir, SimplificationOptions, TileId, Tiles};
 use gui::*;
 use nesmc_emu::NesMachine;
 use playback_state::{PlaybackCommand, PlaybackState};
+use std::time::{Duration, Instant};
 
 //#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[derive(Debug)]
@@ -23,7 +23,7 @@ pub enum Pane {
 impl Pane {
     pub fn ui(&mut self, ui: &mut Ui, machine: &mut NesMachine, playback: &mut PlaybackState) {
         match self {
-            Pane::CpuBrowser(mem_browser) => mem_browser.draw(ui, machine),
+            Pane::CpuBrowser(mem_browser) => mem_browser.draw(ui, machine, playback),
             Pane::PpuBrowser(ppu_browser) => ppu_browser.draw(ui, machine),
             Pane::CpuInspector(cpu_inspector) => cpu_inspector.draw(ui, machine),
             Pane::PpuInspector(ppu_inspector) => ppu_inspector.draw(ui, machine),
@@ -158,19 +158,29 @@ impl NesMachineApp {
         }
 
         if !self.behavior.playback.paused {
+            let machine = &mut self.behavior.machine;
+            let playback = &mut self.behavior.playback;
+
             loop {
                 // Run until machine reaches next frame
                 loop {
-                    self.behavior.machine.step();
-                    if self.behavior.machine.ppu.cycle() == 0
-                        && self.behavior.machine.ppu.scanline() == 0
-                    {
+                    machine.step();
+
+                    if machine.ppu.cycle() == 0 && machine.ppu.scanline() == 0 {
+                        break;
+                    }
+                    if playback.breakpoints.contains(&machine.cpu.pc) {
+                        playback.paused = true;
                         break;
                     }
                 }
 
-                self.behavior.playback.t_last_frame += Duration::from_secs_f64(1. / 60.);
-                if Instant::now() < self.behavior.playback.t_last_frame {
+                if playback.paused {
+                    break;
+                }
+
+                playback.t_last_frame += Duration::from_secs_f64(1. / 60.);
+                if Instant::now() < playback.t_last_frame {
                     break;
                 }
             }
