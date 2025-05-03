@@ -60,11 +60,9 @@ impl NesMachine {
                 self.cpu.nmi(&mut self.bus);
                 self.ppu.nmi_fired = false;
                 self.cycle_count += 7;
-                self.ppu_cycles += 7;
             } else {
                 let cycles = self.cpu.step(&mut self.bus);
                 self.cycle_count += cycles;
-                self.ppu_cycles += cycles;
             }
 
             self.ppu_cycles = 0;
