@@ -10,7 +10,7 @@ use super::components::ScrollSlider;
 use crate::playback_state::PlaybackState;
 
 const W_TYPE_COL: f32 = 52.;
-const W_ADDR_COL: f32 = 48.;
+const W_ADDR_COL: f32 = 64.;
 const W_VALUE_COL: f32 = 48.;
 const H_HEADER: f32 = 24.;
 const H_ROW: f32 = 16.;
