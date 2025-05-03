@@ -105,7 +105,9 @@ impl Ppu {
     fn process_vblank_set_scanline(&mut self, bus: &mut Bus) {
         if self.cycle == 1 {
             bus.ppu_regs.vblank = true;
-            self.nmi_fired = true;
+            if bus.ppu_regs.ctrl.nmi_enable {
+                self.nmi_fired = true;
+            }
         }
     }
 
