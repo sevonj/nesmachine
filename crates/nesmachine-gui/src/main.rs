@@ -4,7 +4,7 @@ mod playback_state;
 use eframe::egui;
 use egui::{CentralPanel, Frame, Ui, vec2};
 use egui_tiles::{Behavior, LinearDir, SimplificationOptions, TileId, Tiles};
-use gui::{CpuBrowser, CpuInspector, Display, MenuBar, PlaybackControl, PpuBrowser};
+use gui::*;
 use nesmc_emu::NesMachine;
 use playback_state::{PlaybackCommand, PlaybackState};
 
@@ -14,6 +14,7 @@ pub enum Pane {
     CpuBrowser(CpuBrowser),
     PpuBrowser(PpuBrowser),
     CpuInspector(CpuInspector),
+    PpuInspector(PpuInspector),
     PlabackControl(PlaybackControl),
     Display(Display),
 }
@@ -24,6 +25,7 @@ impl Pane {
             Pane::CpuBrowser(mem_browser) => mem_browser.draw(ui, machine),
             Pane::PpuBrowser(ppu_browser) => ppu_browser.draw(ui, machine),
             Pane::CpuInspector(cpu_inspector) => cpu_inspector.draw(ui, machine),
+            Pane::PpuInspector(ppu_inspector) => ppu_inspector.draw(ui, machine),
             Pane::PlabackControl(playback_control) => playback_control.draw(ui, machine, playback),
             Pane::Display(display) => display.draw(ui, machine),
         }
@@ -34,6 +36,7 @@ impl Pane {
             Pane::CpuBrowser(_) => "CPU Address Space".into(),
             Pane::PpuBrowser(_) => "PPU Address Space".into(),
             Pane::CpuInspector(_) => "CPU Inspector".into(),
+            Pane::PpuInspector(_) => "PPU Inspector".into(),
             Pane::PlabackControl(_) => "Playback".into(),
             Pane::Display(_) => "Display".into(),
         }
@@ -100,21 +103,21 @@ impl Default for NesMachineApp {
 
         let playback = tiles.insert_pane(Pane::PlabackControl(PlaybackControl));
         let cpu_insp = tiles.insert_pane(Pane::CpuInspector(CpuInspector));
+        let ppu_insp = tiles.insert_pane(Pane::PpuInspector(PpuInspector));
         let cpu_browser = tiles.insert_pane(Pane::CpuBrowser(CpuBrowser::default()));
         let ppu_browser = tiles.insert_pane(Pane::PpuBrowser(PpuBrowser::default()));
         let display = tiles.insert_pane(Pane::Display(Display));
 
         let mut left_vertical =
-            egui_tiles::Linear::new(LinearDir::Vertical, vec![playback, cpu_insp]);
-        left_vertical.shares.set_share(playback, 0.06);
+            egui_tiles::Linear::new(LinearDir::Vertical, vec![playback, cpu_insp, ppu_insp]);
+        left_vertical.shares.set_share(playback, 0.2);
         let left_vertical = tiles.insert_container(left_vertical);
 
         let browser_tabs = egui_tiles::Tabs::new(vec![cpu_browser, ppu_browser]);
         let browser_tabs = tiles.insert_container(browser_tabs);
 
-        let mut center_vertical =
+        let center_vertical =
             egui_tiles::Linear::new(LinearDir::Vertical, vec![display, browser_tabs]);
-        center_vertical.shares.set_share(playback, 0.06);
         let center_vertical = tiles.insert_container(center_vertical);
 
         let mut hbox =

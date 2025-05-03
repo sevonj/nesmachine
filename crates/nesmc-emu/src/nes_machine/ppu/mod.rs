@@ -131,7 +131,7 @@ impl Ppu {
         let pixel_off = pixel_idx * 3;
 
         let name_idx = (self.cycle as u16 - 1) / 8 + (self.scanline as u16 / 8) * 32;
-        let name_off = bus.ppu_regs.base_nametable_addr + name_idx;
+        let name_off = bus.ppu_regs.ctrl.base_nametable_addr + name_idx;
         let tile_idx = bus.read_ppu(name_off);
         //println!("{tile_idx:02X}");
 

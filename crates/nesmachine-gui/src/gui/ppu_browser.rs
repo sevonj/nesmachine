@@ -179,24 +179,27 @@ impl PpuBrowser {
                     }
                 });
                 ui.horizontal(|ui| {
-                    let text = format!("0x{:04x}", machine.bus.ppu_regs.base_nametable_addr);
+                    let text = format!("0x{:04x}", machine.bus.ppu_regs.ctrl.base_nametable_addr);
                     ui.monospace(text);
                     if ui.link("Current nametable").clicked() {
-                        self.jump_to(machine.bus.ppu_regs.base_nametable_addr as usize);
+                        self.jump_to(machine.bus.ppu_regs.ctrl.base_nametable_addr as usize);
                     }
                 });
                 ui.horizontal(|ui| {
-                    let text = format!("0x{:04x}", machine.bus.ppu_regs.base_bg_pattern_addr);
+                    let text = format!("0x{:04x}", machine.bus.ppu_regs.ctrl.base_bg_pattern_addr);
                     ui.monospace(text);
                     if ui.link("BG pattern table").clicked() {
-                        self.jump_to(machine.bus.ppu_regs.base_bg_pattern_addr as usize);
+                        self.jump_to(machine.bus.ppu_regs.ctrl.base_bg_pattern_addr as usize);
                     }
                 });
                 ui.horizontal(|ui| {
-                    let text = format!("0x{:04x}", machine.bus.ppu_regs.base_sprite_pattern_addr);
+                    let text = format!(
+                        "0x{:04x}",
+                        machine.bus.ppu_regs.ctrl.base_sprite_pattern_addr
+                    );
                     ui.monospace(text);
                     if ui.link("Sprite pattern table").clicked() {
-                        self.jump_to(machine.bus.ppu_regs.base_sprite_pattern_addr as usize);
+                        self.jump_to(machine.bus.ppu_regs.ctrl.base_sprite_pattern_addr as usize);
                     }
                 });
             });
@@ -215,13 +218,13 @@ impl PpuBrowser {
             {
                 ui.label(id);
             }
-            if machine.bus.ppu_regs.base_bg_pattern_addr == addr {
+            if machine.bus.ppu_regs.ctrl.base_bg_pattern_addr == addr {
                 ui.label("(BG)");
             }
-            if machine.bus.ppu_regs.base_sprite_pattern_addr == addr {
+            if machine.bus.ppu_regs.ctrl.base_sprite_pattern_addr == addr {
                 ui.label("(Sprite)");
             }
-            if machine.bus.ppu_regs.base_nametable_addr == addr {
+            if machine.bus.ppu_regs.ctrl.base_nametable_addr == addr {
                 ui.label("(current)");
             }
         });
