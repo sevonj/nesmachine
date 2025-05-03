@@ -10,7 +10,7 @@ pub use i_ram::IRam;
 pub use input::Input;
 pub use mapper::Mapper;
 pub use p_ram::PRam;
-pub use ppu_registers::PpuRegisters;
+pub use ppu_registers::*;
 
 pub trait Device {
     /// Reset button behavior

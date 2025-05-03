@@ -44,14 +44,17 @@ impl MapperIo for Nrom {
         let addr = self.arrangement.map_addr(addr);
         match addr {
             0x0000..=0x1fff => self.chr_rom[addr as usize],
+            0x2000..=0x27ff => self.vram[addr as usize - 0x2000],
             _ => 0,
         }
     }
 
     fn write_ppu(&mut self, addr: u16, value: u8) {
         let addr = self.arrangement.map_addr(addr);
-        if let 0x2000..=0x27ff = addr {
-            self.vram[addr as usize] = value
+        match addr {
+            0x0000..=0x1fff => self.chr_rom[addr as usize] = value,
+            0x2000..=0x27ff => self.vram[addr as usize - 0x2000] = value,
+            _ => (),
         }
     }
 

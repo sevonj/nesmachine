@@ -65,6 +65,23 @@ impl Cpu {
         self.exec_instruction(bus, op_code)
     }
 
+    pub fn nmi(&mut self, bus: &mut Bus) {
+        let pc_lo = (self.pc & 0x00ff) as u8;
+        let pc_hi = (self.pc >> 8) as u8;
+        self.push_stack(pc_lo, bus);
+        self.push_stack(pc_hi, bus);
+        self.push_stack(self.status.into(), bus);
+
+        self.status.i = true;
+
+        const NMI_VECTOR_ADDR: u16 = 0xfffa;
+
+        let pc_lo = bus.read(NMI_VECTOR_ADDR) as u16;
+        let pc_hi = bus.read(NMI_VECTOR_ADDR + 1) as u16;
+
+        self.pc = pc_lo + (pc_hi << 8);
+    }
+
     /// Increment PC convenience shortcut
     fn inc_pc(&mut self) {
         self.pc = self.pc.wrapping_add(1);

@@ -20,6 +20,7 @@ pub struct Ppu {
     frame_even: bool,
 
     pattern_tile_idx: u16,
+    pub nmi_fired: bool,
 }
 
 impl Default for Ppu {
@@ -35,6 +36,7 @@ impl Default for Ppu {
             _w: false,
             frame_even: true,
             pattern_tile_idx: 0,
+            nmi_fired: false,
         }
     }
 }
@@ -103,6 +105,7 @@ impl Ppu {
     fn process_vblank_set_scanline(&mut self, bus: &mut Bus) {
         if self.cycle == 1 {
             bus.ppu_regs.vblank = true;
+            self.nmi_fired = true;
         }
     }
 
