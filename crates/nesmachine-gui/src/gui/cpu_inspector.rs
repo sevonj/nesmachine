@@ -10,7 +10,8 @@ pub struct CpuInspector;
 
 impl CpuInspector {
     pub fn draw(&mut self, ui: &mut Ui, machine: &mut NesMachine) {
-        //CentralPanel::default().show_inside(ui, |ui| {
+        ui.label(format!("Cycles elapsed: {}", machine.cycle_count));
+
         let tablebuider = TableBuilder::new(ui)
             .column(Column::auto())
             .column(Column::remainder())
@@ -81,6 +82,5 @@ impl CpuInspector {
                 });
             });
         });
-        //});
     }
 }

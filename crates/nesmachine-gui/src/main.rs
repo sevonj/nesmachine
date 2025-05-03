@@ -1,6 +1,7 @@
 mod gui;
 mod playback_state;
 
+use std::time::{Duration, Instant};
 use eframe::egui;
 use egui::{CentralPanel, Frame, Ui, vec2};
 use egui_tiles::{Behavior, LinearDir, SimplificationOptions, TileId, Tiles};
@@ -147,8 +148,32 @@ impl NesMachineApp {
             match command {
                 PlaybackCommand::Step => self.behavior.machine.step(),
                 PlaybackCommand::Reset => self.behavior.machine.reset(),
+                PlaybackCommand::Pause => self.behavior.playback.paused = true,
+                PlaybackCommand::Unpause => {
+                    self.behavior.playback.paused = false;
+                    self.behavior.playback.t_last_frame = Instant::now();
+                }
             }
             self.behavior.playback.command = None;
+        }
+
+        if !self.behavior.playback.paused {
+            loop {
+                // Run until machine reaches next frame
+                loop {
+                    self.behavior.machine.step();
+                    if self.behavior.machine.ppu.cycle() == 0
+                        && self.behavior.machine.ppu.scanline() == 0
+                    {
+                        break;
+                    }
+                }
+
+                self.behavior.playback.t_last_frame += Duration::from_secs_f64(1. / 60.);
+                if Instant::now() < self.behavior.playback.t_last_frame {
+                    break;
+                }
+            }
         }
     }
 }
@@ -162,6 +187,10 @@ impl eframe::App for NesMachineApp {
         });
 
         self.update_emu();
+
+        if !self.behavior.playback.paused {
+            ctx.request_repaint();
+        }
     }
 }
 

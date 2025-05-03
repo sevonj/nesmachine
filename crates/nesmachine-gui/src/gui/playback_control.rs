@@ -8,14 +8,21 @@ pub struct PlaybackControl;
 
 impl PlaybackControl {
     pub fn draw(&mut self, ui: &mut Ui, machine: &mut NesMachine, playback: &mut PlaybackState) {
-        //CentralPanel::default().show_inside(ui, |ui| {
         ui.horizontal(|ui| {
-            if !playback.running {
-                ui.disable();
-            }
-
             if ui.button("Reset").clicked() {
                 playback.command = Some(PlaybackCommand::Reset);
+            }
+
+            if playback.paused {
+                if ui.button("▶").clicked() {
+                    playback.command = Some(PlaybackCommand::Unpause);
+                }
+            } else if ui.button("⏸").clicked() {
+                playback.command = Some(PlaybackCommand::Pause);
+            }
+
+            if !playback.paused {
+                ui.disable();
             }
 
             if ui.button("Step").clicked() {
@@ -31,6 +38,5 @@ impl PlaybackControl {
                 }
             }
         });
-        //  });
     }
 }

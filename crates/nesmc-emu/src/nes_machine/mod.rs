@@ -16,6 +16,7 @@ pub struct NesMachine {
     pub cpu: Cpu,
     pub ppu: Ppu,
     pub cycle_count: usize,
+    pub ppu_cycles_behind: usize,
 }
 
 impl Default for NesMachine {
@@ -29,6 +30,7 @@ impl Default for NesMachine {
             cpu,
             ppu,
             cycle_count: 7,
+            ppu_cycles_behind: 7,
         }
     }
 }
@@ -50,11 +52,13 @@ impl NesMachine {
 
     /// Step one CPU instruction
     pub fn step(&mut self) {
-        self.cycle_count += self.cpu.step(&mut self.bus);
+        let cycles = self.cpu.step(&mut self.bus);
+        self.cycle_count += cycles;
+        self.ppu_cycles_behind += cycles;
 
-        while self.cycle_count >= 3 {
+        while self.ppu_cycles_behind >= 3 {
             self.ppu.step(&mut self.bus);
-            self.cycle_count -= 3;
+            self.ppu_cycles_behind -= 3;
         }
     }
 }
