@@ -147,23 +147,23 @@ impl NesMachineApp {
     }
 
     fn update_emu(&mut self) {
-        if let Some(command) = &self.behavior.playback.command {
+        let playback = &mut self.behavior.playback;
+        let machine = &mut self.behavior.machine;
+
+        if let Some(command) = &playback.command {
             match command {
-                PlaybackCommand::Step => self.behavior.machine.step(),
-                PlaybackCommand::Reset => self.behavior.machine.reset(),
-                PlaybackCommand::Pause => self.behavior.playback.paused = true,
+                PlaybackCommand::Step => machine.step(),
+                PlaybackCommand::Reset => machine.reset(),
+                PlaybackCommand::Pause => playback.paused = true,
                 PlaybackCommand::Unpause => {
-                    self.behavior.playback.paused = false;
-                    self.behavior.playback.t_next_frame = Instant::now();
+                    playback.paused = false;
+                    playback.t_next_frame = Instant::now();
                 }
             }
-            self.behavior.playback.command = None;
+            playback.command = None;
         }
 
-        if !self.behavior.playback.paused {
-            let machine = &mut self.behavior.machine;
-            let playback = &mut self.behavior.playback;
-
+        if !playback.paused {
             loop {
                 // Run until machine reaches next frame
                 loop {
@@ -178,11 +178,12 @@ impl NesMachineApp {
                     }
                 }
 
+                playback.t_next_frame += Duration::from_secs_f64(1. / 60.);
+
                 if playback.paused {
                     break;
                 }
 
-                playback.t_next_frame += Duration::from_secs_f64(1. / 60.);
                 if Instant::now() < playback.t_next_frame {
                     break;
                 }
