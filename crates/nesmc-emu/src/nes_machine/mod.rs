@@ -56,9 +56,11 @@ impl NesMachine {
         self.cycle_count += cycles;
         self.ppu_cycles_behind += cycles;
 
-        while self.ppu_cycles_behind >= 3 {
+        while self.ppu_cycles_behind >= 1 {
             self.ppu.step(&mut self.bus);
-            self.ppu_cycles_behind -= 3;
+            self.ppu.step(&mut self.bus);
+            self.ppu.step(&mut self.bus);
+            self.ppu_cycles_behind -= 1;
         }
     }
 }
