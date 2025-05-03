@@ -154,7 +154,7 @@ impl NesMachineApp {
                 PlaybackCommand::Pause => self.behavior.playback.paused = true,
                 PlaybackCommand::Unpause => {
                     self.behavior.playback.paused = false;
-                    self.behavior.playback.t_last_frame = Instant::now();
+                    self.behavior.playback.t_next_frame = Instant::now();
                 }
             }
             self.behavior.playback.command = None;
@@ -182,8 +182,8 @@ impl NesMachineApp {
                     break;
                 }
 
-                playback.t_last_frame += Duration::from_secs_f64(1. / 60.);
-                if Instant::now() < playback.t_last_frame {
+                playback.t_next_frame += Duration::from_secs_f64(1. / 60.);
+                if Instant::now() < playback.t_next_frame {
                     break;
                 }
             }
