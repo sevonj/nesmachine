@@ -121,6 +121,8 @@ mod tests {
 
             println!("ln {ln:02} ok - {this_cpu} CYC:{this_cyc}");
             machine.step();
+            machine.step();
+            machine.step();
         }
     }
 
