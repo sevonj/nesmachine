@@ -18,6 +18,7 @@ pub enum Pane {
     CpuInspector(CpuInspector),
     PpuInspector(PpuInspector),
     PpuNametableInspector(PpuNametableInspector),
+    PpuPatternInspector(PpuPatternInspector),
     PlabackControl(PlaybackControl),
     Display(Display),
 }
@@ -30,6 +31,7 @@ impl Pane {
             Pane::CpuInspector(pane) => pane.draw(ui, machine),
             Pane::PpuInspector(pane) => pane.draw(ui, machine),
             Pane::PpuNametableInspector(pane) => pane.draw(ui, machine),
+            Pane::PpuPatternInspector(pane) => pane.draw(ui, machine),
             Pane::PlabackControl(pane) => pane.draw(ui, machine, playback),
             Pane::Display(pane) => pane.draw(ui, machine),
         }
@@ -42,6 +44,7 @@ impl Pane {
             Pane::CpuInspector(_) => "CPU Inspector".into(),
             Pane::PpuInspector(_) => "PPU Inspector".into(),
             Pane::PpuNametableInspector(_) => "PPU Nametables".into(),
+            Pane::PpuPatternInspector(_) => "PPU Patterns".into(),
             Pane::PlabackControl(_) => "Playback".into(),
             Pane::Display(_) => "Display".into(),
         }
@@ -114,6 +117,8 @@ impl Default for NesMachineApp {
         let ppu_browser = tiles.insert_pane(Pane::PpuBrowser(PpuBrowser::default()));
         let ppu_nametable =
             tiles.insert_pane(Pane::PpuNametableInspector(PpuNametableInspector::default()));
+        let ppu_pattern =
+            tiles.insert_pane(Pane::PpuPatternInspector(PpuPatternInspector::default()));
         let display = tiles.insert_pane(Pane::Display(Display));
 
         let mut left_vertical =
@@ -121,7 +126,11 @@ impl Default for NesMachineApp {
         left_vertical.shares.set_share(playback, 0.2);
         let left_vertical = tiles.insert_container(left_vertical);
 
-        let main_top = egui_tiles::Linear::new(LinearDir::Horizontal, vec![display, ppu_nametable]);
+        let graphics_inspectors = egui_tiles::Tabs::new(vec![ppu_nametable, ppu_pattern]);
+        let graphics_inspectors = tiles.insert_container(graphics_inspectors);
+
+        let main_top =
+            egui_tiles::Linear::new(LinearDir::Horizontal, vec![display, graphics_inspectors]);
         let main_top = tiles.insert_container(main_top);
 
         let main_bottom = egui_tiles::Tabs::new(vec![cpu_browser, ppu_browser]);
