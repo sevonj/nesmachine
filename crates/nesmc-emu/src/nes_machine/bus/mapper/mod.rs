@@ -136,15 +136,8 @@ impl INesHeader {
         let playchoice = header_buf[7] & 0x2 != 0;
         let nes2_0 = (header_buf[7] >> 2) & 0x3 == 2;
 
-        if v_mirroring
-            | battery
-            | trainer
-            | alt_nametable_layout
-            | vs_unisystem
-            | playchoice
-            | nes2_0
-        {
-            return Err(NesMachineError::UnsupportedMapper);
+        if battery | trainer | alt_nametable_layout | vs_unisystem | playchoice | nes2_0 {
+            return Err(NesMachineError::MapperUnsupportedFeatures);
         }
 
         Ok(Self {
@@ -224,14 +217,22 @@ impl Mapper {
                 match header.len_prg_rom {
                     0x4000 => reader.read_exact(&mut prg_rom)?,
                     0x8000 => reader.read_exact(&mut prg_rom)?,
-                    _ => return Err(NesMachineError::UnsupportedMapper),
+                    _ => {
+                        return Err(NesMachineError::MapperUnexpectedPrgRomLen(
+                            header.len_chr_rom,
+                        ));
+                    }
                 }
 
                 // 8KB
                 let mut chr_rom = vec![0_u8; 0x2000];
                 match header.len_chr_rom {
                     0x2000 => reader.read_exact(&mut chr_rom)?,
-                    _ => return Err(NesMachineError::UnsupportedMapper),
+                    _ => {
+                        return Err(NesMachineError::MapperUnexpectedChrRomLen(
+                            header.len_chr_rom,
+                        ));
+                    }
                 }
 
                 Ok(Self::Nrom(Nrom::new(prg_rom, chr_rom, header.v_mirroring)))
@@ -246,7 +247,9 @@ impl Mapper {
 
                 Ok(Self::Mmc1(Mmc1::new(prg_ram, prg_rom, chr_rom)))
             }
-            _ => Err(NesMachineError::UnsupportedMapper),
+            _ => Err(NesMachineError::MapperUnsupportedId(
+                header.mapper_id as usize,
+            )),
         }
     }
 

@@ -5,8 +5,6 @@ use egui::{Key, KeyboardShortcut as Shortcut, Modifiers, ViewportCommand};
 
 use crate::NesMachineApp;
 
-use super::dialogs::open_rom_dialog;
-
 pub const SHORTCUT_OPEN: Shortcut = Shortcut::new(Modifiers::COMMAND, Key::O);
 pub const SHORTCUT_QUIT: Shortcut = Shortcut::new(Modifiers::COMMAND, Key::Q);
 
@@ -16,7 +14,7 @@ impl NesMachineApp {
             ctx.send_viewport_cmd(ViewportCommand::Close);
         }
         if ctx.input_mut(|i| i.consume_shortcut(&SHORTCUT_OPEN)) {
-            open_rom_dialog(&mut self.behavior.machine);
+            self.open_rom_dialog();
         }
     }
 }

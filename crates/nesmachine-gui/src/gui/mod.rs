@@ -12,7 +12,6 @@ mod ppu_inspector;
 pub use cpu_browser::CpuBrowser;
 pub use cpu_inspector::CpuInspector;
 pub use display::Display;
-pub use menu_bar::MenuBar;
 pub use playback_control::PlaybackControl;
 pub use ppu_browser::PpuBrowser;
 pub use ppu_inspector::PpuInspector;

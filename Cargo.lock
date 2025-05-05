@@ -893,6 +893,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "egui-toast"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "366a31eb8c905835c85a36baff26d7a003a9fd6631a04b1f15f42d9cb20d11ad"
+dependencies = [
+ "egui",
+]
+
+[[package]]
 name = "egui-wgpu"
 version = "0.31.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1929,6 +1938,7 @@ version = "0.1.0"
 dependencies = [
  "eframe",
  "egui",
+ "egui-toast",
  "egui_extras",
  "egui_tiles",
  "nesmc-disassembler",

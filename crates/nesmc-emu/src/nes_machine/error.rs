@@ -2,7 +2,10 @@
 pub enum NesMachineError {
     FileIo,
     FileInvalidSig,
-    UnsupportedMapper,
+    MapperUnsupportedId(usize),
+    MapperUnsupportedFeatures,
+    MapperUnexpectedChrRomLen(usize),
+    MapperUnexpectedPrgRomLen(usize),
 }
 
 impl std::fmt::Display for NesMachineError {
@@ -10,7 +13,16 @@ impl std::fmt::Display for NesMachineError {
         match self {
             NesMachineError::FileIo => write!(f, "Couldn't read file"),
             NesMachineError::FileInvalidSig => write!(f, "Invalid file signature"),
-            NesMachineError::UnsupportedMapper => write!(f, "Unsupported mapper type"),
+            NesMachineError::MapperUnsupportedId(id) => write!(f, "Unsupported mapper id: {id}"),
+            NesMachineError::MapperUnsupportedFeatures => {
+                write!(f, "Mapper has unsupported features")
+            }
+            NesMachineError::MapperUnexpectedChrRomLen(len) => {
+                write!(f, "Unexpected CHR ROM length: {len:x}")
+            }
+            NesMachineError::MapperUnexpectedPrgRomLen(len) => {
+                write!(f, "Unexpected PRG ROM length: {len:x}")
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ mod playback_state;
 use eframe::egui;
 use egui::{CentralPanel, Frame, Ui, vec2};
 use egui_tiles::{Behavior, LinearDir, SimplificationOptions, TileId, Tiles};
+use egui_toast::Toasts;
 use gui::*;
 use nesmc_emu::NesMachine;
 use playback_state::{PlaybackCommand, PlaybackState};
@@ -95,6 +96,7 @@ struct NesMachineApp {
     tree: egui_tiles::Tree<Pane>,
     // #[cfg_attr(feature = "serde", serde(skip))]
     behavior: TreeBehavior,
+    toasts: Toasts,
 }
 
 impl Default for NesMachineApp {
@@ -134,6 +136,7 @@ impl Default for NesMachineApp {
         Self {
             tree,
             behavior: TreeBehavior::new(),
+            toasts: Toasts::new(),
         }
     }
 }
@@ -191,13 +194,15 @@ impl NesMachineApp {
 impl eframe::App for NesMachineApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         self.consume_common_shortcuts(ctx);
-        MenuBar::new(&mut self.behavior.machine).show(ctx);
+        self.menu_bar(ctx);
 
         CentralPanel::default().frame(Frame::NONE).show(ctx, |ui| {
             self.tree.ui(&mut self.behavior, ui);
         });
 
         self.update_emu();
+
+        self.toasts.show(ctx);
 
         if !self.behavior.playback.paused {
             ctx.request_repaint();

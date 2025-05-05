@@ -1,42 +1,20 @@
-use egui::{Button, Context, InnerResponse, TopBottomPanel, Ui, Widget};
-use nesmc_emu::NesMachine;
+use egui::{Button, Context, InnerResponse, TopBottomPanel, Ui};
 
-use super::{
-    dialogs::open_rom_dialog,
-    keyboard_shortcuts::{SHORTCUT_OPEN, SHORTCUT_QUIT},
-};
+use crate::NesMachineApp;
 
-pub struct MenuBar<'a> {
-    machine: &'a mut NesMachine,
-}
+use super::keyboard_shortcuts::{SHORTCUT_OPEN, SHORTCUT_QUIT};
 
-impl<'a> MenuBar<'a> {
-    pub fn new(machine: &'a mut NesMachine) -> Self {
-        Self { machine }
-    }
-
-    pub fn show(self, ctx: &Context) -> InnerResponse<()> {
+impl NesMachineApp {
+    pub fn menu_bar(&mut self, ctx: &Context) -> InnerResponse<()> {
         TopBottomPanel::top("menu_bar").show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.add(FileMenu::new(self.machine));
-                ui.add(HelpMenu::new());
+                self.file_menu(ui);
+                self.help_menu(ui);
             });
         })
     }
-}
 
-struct FileMenu<'a> {
-    machine: &'a mut NesMachine,
-}
-
-impl<'a> FileMenu<'a> {
-    pub fn new(machine: &'a mut NesMachine) -> Self {
-        Self { machine }
-    }
-}
-
-impl Widget for FileMenu<'_> {
-    fn ui(self, ui: &mut Ui) -> egui::Response {
+    fn file_menu(&mut self, ui: &mut Ui) -> egui::Response {
         ui.menu_button("File", |ui| {
             let open_button =
                 Button::new("Open").shortcut_text(ui.ctx().format_shortcut(&SHORTCUT_OPEN));
@@ -44,7 +22,7 @@ impl Widget for FileMenu<'_> {
                 Button::new("Quit").shortcut_text(ui.ctx().format_shortcut(&SHORTCUT_QUIT));
 
             if ui.add(open_button).clicked() {
-                open_rom_dialog(self.machine);
+                self.open_rom_dialog();
                 ui.close_menu();
             }
 
@@ -57,18 +35,8 @@ impl Widget for FileMenu<'_> {
         })
         .response
     }
-}
 
-struct HelpMenu;
-
-impl HelpMenu {
-    pub fn new() -> Self {
-        Self
-    }
-}
-
-impl Widget for HelpMenu {
-    fn ui(self, ui: &mut Ui) -> egui::Response {
+    fn help_menu(&mut self, ui: &mut Ui) -> egui::Response {
         ui.menu_button("Help", |ui| ui.label("NesMachine WIP"))
             .response
     }
