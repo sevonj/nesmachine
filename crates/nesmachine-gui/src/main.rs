@@ -17,6 +17,7 @@ pub enum Pane {
     PpuBrowser(PpuBrowser),
     CpuInspector(CpuInspector),
     PpuInspector(PpuInspector),
+    PpuNametableInspector(PpuNametableInspector),
     PlabackControl(PlaybackControl),
     Display(Display),
 }
@@ -24,12 +25,13 @@ pub enum Pane {
 impl Pane {
     pub fn ui(&mut self, ui: &mut Ui, machine: &mut NesMachine, playback: &mut PlaybackState) {
         match self {
-            Pane::CpuBrowser(mem_browser) => mem_browser.draw(ui, machine, playback),
-            Pane::PpuBrowser(ppu_browser) => ppu_browser.draw(ui, machine),
-            Pane::CpuInspector(cpu_inspector) => cpu_inspector.draw(ui, machine),
-            Pane::PpuInspector(ppu_inspector) => ppu_inspector.draw(ui, machine),
-            Pane::PlabackControl(playback_control) => playback_control.draw(ui, machine, playback),
-            Pane::Display(display) => display.draw(ui, machine),
+            Pane::CpuBrowser(pane) => pane.draw(ui, machine, playback),
+            Pane::PpuBrowser(pane) => pane.draw(ui, machine),
+            Pane::CpuInspector(pane) => pane.draw(ui, machine),
+            Pane::PpuInspector(pane) => pane.draw(ui, machine),
+            Pane::PpuNametableInspector(pane) => pane.draw(ui, machine),
+            Pane::PlabackControl(pane) => pane.draw(ui, machine, playback),
+            Pane::Display(pane) => pane.draw(ui, machine),
         }
     }
 
@@ -39,6 +41,7 @@ impl Pane {
             Pane::PpuBrowser(_) => "PPU Address Space".into(),
             Pane::CpuInspector(_) => "CPU Inspector".into(),
             Pane::PpuInspector(_) => "PPU Inspector".into(),
+            Pane::PpuNametableInspector(_) => "PPU Nametables".into(),
             Pane::PlabackControl(_) => "Playback".into(),
             Pane::Display(_) => "Display".into(),
         }
@@ -109,6 +112,8 @@ impl Default for NesMachineApp {
         let ppu_insp = tiles.insert_pane(Pane::PpuInspector(PpuInspector));
         let cpu_browser = tiles.insert_pane(Pane::CpuBrowser(CpuBrowser::default()));
         let ppu_browser = tiles.insert_pane(Pane::PpuBrowser(PpuBrowser::default()));
+        let ppu_nametable =
+            tiles.insert_pane(Pane::PpuNametableInspector(PpuNametableInspector::default()));
         let display = tiles.insert_pane(Pane::Display(Display));
 
         let mut left_vertical =
@@ -116,15 +121,18 @@ impl Default for NesMachineApp {
         left_vertical.shares.set_share(playback, 0.2);
         let left_vertical = tiles.insert_container(left_vertical);
 
-        let browser_tabs = egui_tiles::Tabs::new(vec![cpu_browser, ppu_browser]);
-        let browser_tabs = tiles.insert_container(browser_tabs);
+        let main_top = egui_tiles::Linear::new(LinearDir::Horizontal, vec![display, ppu_nametable]);
+        let main_top = tiles.insert_container(main_top);
 
-        let center_vertical =
-            egui_tiles::Linear::new(LinearDir::Vertical, vec![display, browser_tabs]);
-        let center_vertical = tiles.insert_container(center_vertical);
+        let main_bottom = egui_tiles::Tabs::new(vec![cpu_browser, ppu_browser]);
+        let main_bottom = tiles.insert_container(main_bottom);
+
+        let main_vertical =
+            egui_tiles::Linear::new(LinearDir::Vertical, vec![main_top, main_bottom]);
+        let main_vertical = tiles.insert_container(main_vertical);
 
         let mut hbox =
-            egui_tiles::Linear::new(LinearDir::Horizontal, vec![left_vertical, center_vertical]);
+            egui_tiles::Linear::new(LinearDir::Horizontal, vec![left_vertical, main_vertical]);
         hbox.shares.set_share(left_vertical, 0.25);
         let hbox = tiles.insert_container(hbox);
 
