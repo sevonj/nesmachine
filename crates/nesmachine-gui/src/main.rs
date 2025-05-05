@@ -190,6 +190,7 @@ impl NesMachineApp {
 
 impl eframe::App for NesMachineApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        self.consume_common_shortcuts(ctx);
         MenuBar::new(&mut self.behavior.machine).show(ctx);
 
         CentralPanel::default().frame(Frame::NONE).show(ctx, |ui| {

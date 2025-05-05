@@ -1,7 +1,9 @@
 mod components;
 mod cpu_browser;
 mod cpu_inspector;
+mod dialogs;
 mod display;
+mod keyboard_shortcuts;
 mod menu_bar;
 mod playback_control;
 mod ppu_browser;
