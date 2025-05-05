@@ -107,8 +107,8 @@ impl Widget for PatternCell<'_> {
             .show(ui, |ui| {
                 let mut tile = Vec::<u8>::with_capacity(64 * 3);
 
-                for x in 0..=7 {
-                    for y in 0..=7 {
+                for y in 0..=7 {
+                    for x in 0..=7 {
                         let color = self.read_px(x, y);
                         tile.push(color.0);
                         tile.push(color.1);
