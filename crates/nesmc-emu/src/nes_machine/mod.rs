@@ -3,7 +3,7 @@ mod cpu;
 mod error;
 mod ppu;
 
-use std::path::Path;
+use std::{io::BufReader, path::Path};
 
 use bus::{Bus, Mapper};
 use cpu::Cpu;
@@ -36,9 +36,17 @@ impl Default for NesMachine {
 }
 
 impl NesMachine {
-    pub fn open<P: AsRef<Path>>(&mut self, path: P) -> Result<(), NesMachineError> {
+    pub fn open_path<P: AsRef<Path>>(&mut self, path: P) -> Result<(), NesMachineError> {
         self.bus.cart = Mapper::None;
         self.bus.cart = Mapper::open(path)?;
+        self.cpu = Cpu::new(&mut self.bus);
+        Ok(())
+    }
+
+    pub fn open_data(&mut self, data: &[u8]) -> Result<(), NesMachineError> {
+        let mut reader = BufReader::new(data);
+        self.bus.cart = Mapper::None;
+        self.bus.cart = Mapper::from_reader(&mut reader)?;
         self.cpu = Cpu::new(&mut self.bus);
         Ok(())
     }
@@ -127,7 +135,7 @@ mod tests {
     #[test]
     fn run_nestest_c000_log() {
         let mut machine = NesMachine::default();
-        machine.open("../../tests/nestest.nes").unwrap();
+        machine.open_path("../../tests/nestest.nes").unwrap();
         machine.cpu.pc = 0xc000;
 
         let log = read_to_string("../../tests/nestest_c000.log").unwrap();
@@ -137,7 +145,7 @@ mod tests {
     #[test]
     fn run_nestest_c000_log_cycles() {
         let mut machine = NesMachine::default();
-        machine.open("../../tests/nestest.nes").unwrap();
+        machine.open_path("../../tests/nestest.nes").unwrap();
         machine.cpu.pc = 0xc000;
 
         let log = read_to_string("../../tests/nestest_c000.log").unwrap();

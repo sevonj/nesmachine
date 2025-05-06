@@ -5,7 +5,7 @@ mod nrom;
 
 use std::{
     fs::File,
-    io::{BufReader, Read, Seek},
+    io::{BufReader, Read},
     path::Path,
 };
 
@@ -115,7 +115,7 @@ pub struct INesHeader {
 impl INesHeader {
     const MAGIC: &[u8; 4] = b"NES\x1a";
 
-    pub fn read<R: Read + Seek>(reader: &mut BufReader<R>) -> Result<Self, NesMachineError> {
+    pub fn read<R: Read>(reader: &mut BufReader<R>) -> Result<Self, NesMachineError> {
         let mut header_buf = [0_u8; 16];
         reader.read_exact(&mut header_buf)?;
 
@@ -205,7 +205,7 @@ impl Mapper {
         Self::from_reader(&mut reader)
     }
 
-    pub fn from_reader<R: Read + Seek>(reader: &mut BufReader<R>) -> Result<Self, NesMachineError> {
+    pub fn from_reader<R: Read>(reader: &mut BufReader<R>) -> Result<Self, NesMachineError> {
         let header = INesHeader::read(reader)?;
 
         println!("{header:x?}");

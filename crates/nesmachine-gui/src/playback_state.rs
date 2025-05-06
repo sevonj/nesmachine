@@ -1,4 +1,5 @@
-use std::{collections::HashSet, time::Instant};
+use std::collections::HashSet;
+use web_time::Instant;
 
 #[derive(Debug)]
 pub enum PlaybackCommand {

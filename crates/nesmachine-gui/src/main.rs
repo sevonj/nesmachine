@@ -8,7 +8,9 @@ use egui_toast::Toasts;
 use gui::*;
 use nesmc_emu::NesMachine;
 use playback_state::{PlaybackCommand, PlaybackState};
-use std::time::{Duration, Instant};
+use poll_promise::Promise;
+use std::time::Duration;
+use web_time::Instant;
 
 //#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[derive(Debug)]
@@ -103,6 +105,8 @@ struct NesMachineApp {
     // #[cfg_attr(feature = "serde", serde(skip))]
     behavior: TreeBehavior,
     toasts: Toasts,
+
+    open_file_fialog: Option<Promise<Option<Vec<u8>>>>,
 }
 
 impl Default for NesMachineApp {
@@ -154,6 +158,7 @@ impl Default for NesMachineApp {
             tree,
             behavior: TreeBehavior::new(),
             toasts: Toasts::new(),
+            open_file_fialog: None,
         }
     }
 }
@@ -211,23 +216,25 @@ impl NesMachineApp {
 
 impl eframe::App for NesMachineApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        self.check_open_rom_dialog();
         self.consume_common_shortcuts(ctx);
-        self.menu_bar(ctx);
 
+        // GUI
+        self.menu_bar(ctx);
         CentralPanel::default().frame(Frame::NONE).show(ctx, |ui| {
             self.tree.ui(&mut self.behavior, ui);
         });
-
-        self.update_emu();
-
         self.toasts.show(ctx);
-
         if !self.behavior.playback.paused {
             ctx.request_repaint();
         }
+
+        // Emu logic
+        self.update_emu();
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn main() {
     let mut options = eframe::NativeOptions::default();
     options.viewport.inner_size = Some(vec2(1600., 1000.));
@@ -236,4 +243,50 @@ fn main() {
         options,
         Box::new(|cc| Ok(Box::new(NesMachineApp::new(cc)))),
     );
+}
+
+#[cfg(target_arch = "wasm32")]
+fn main() {
+    use eframe::wasm_bindgen::JsCast as _;
+
+    // Redirect `log` message to `console.log` and friends:
+    eframe::WebLogger::init(log::LevelFilter::Debug).ok();
+
+    let web_options = eframe::WebOptions::default();
+
+    wasm_bindgen_futures::spawn_local(async {
+        let document = web_sys::window()
+            .expect("No window")
+            .document()
+            .expect("No document");
+
+        let canvas = document
+            .get_element_by_id("the_canvas_id")
+            .expect("Failed to find the_canvas_id")
+            .dyn_into::<web_sys::HtmlCanvasElement>()
+            .expect("the_canvas_id was not a HtmlCanvasElement");
+
+        let start_result = eframe::WebRunner::new()
+            .start(
+                canvas,
+                web_options,
+                Box::new(|cc| Ok(Box::new(NesMachineApp::new(cc)))),
+            )
+            .await;
+
+        // Remove the loading text and spinner:
+        if let Some(loading_text) = document.get_element_by_id("loading_text") {
+            match start_result {
+                Ok(_) => {
+                    loading_text.remove();
+                }
+                Err(e) => {
+                    loading_text.set_inner_html(
+                        "<p> The app has crashed. See the developer console for details. </p>",
+                    );
+                    panic!("Failed to start eframe: {e:?}");
+                }
+            }
+        }
+    });
 }
