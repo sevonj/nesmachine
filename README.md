@@ -2,7 +2,7 @@
 ___
 # NesMachine
 
-![Screenshot from 2025-05-05 15-20-49](https://github.com/user-attachments/assets/f8af433e-544c-4985-b873-c04af055ef1a)
+![image](https://github.com/user-attachments/assets/77c883a1-3e3c-4479-bb54-0ef95a6fa8c7)
 
 Personal NES emulator for the purpose of learning how computers work.
 
