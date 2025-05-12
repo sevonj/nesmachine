@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <!-- Disable zooming: -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no"
+  />
+
+  <head>
+    <title>NesMachine WASM Demo</title>
+
+    
+<script type="module">
+import init, * as bindings from 'https://sevonj.github.io/nesmachine/nesmachine-gui-3d8c5038716d59c.js';
+const wasm = await init({ module_or_path: 'https://sevonj.github.io/nesmachine/nesmachine-gui-3d8c5038716d59c_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+    <base href="https://sevonj.github.io/nesmachine/" />
+
+    <style>
+      body {
+        background: #404040;
+      }
+
+      html,
+      body {
+        overflow: hidden;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100%;
+        width: 100%;
+      }
+
+      canvas {
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .centered {
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #f0f0f0;
+        font-size: 24px;
+        text-align: center;
+      }
+
+      .lds-dual-ring {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+      }
+
+      .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 24px;
+        height: 24px;
+        margin: 0px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        border-color: #fff transparent #fff transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+      }
+
+      @keyframes lds-dual-ring {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  <link rel="modulepreload" href="https://sevonj.github.io/nesmachine/nesmachine-gui-3d8c5038716d59c.js" crossorigin="anonymous" integrity="sha384-WsHdjl4aZ+l1QLoPtV0THKiLSTj4aE9kfEDqAd/pH502x26ZnjdIEmObrBi+PaSI"><link rel="preload" href="https://sevonj.github.io/nesmachine/nesmachine-gui-3d8c5038716d59c_bg.wasm" crossorigin="anonymous" integrity="sha384-aDSIXbPDQtU1CBpWT0WeHFez8hqmqCA+ntwe0yvmicHgrrfOQJDlITpC1WhHNAQg" as="fetch" type="application/wasm"></head>
+
+  <body>
+    <canvas id="the_canvas_id"></canvas>
+    <div class="centered" id="loading_text">
+      <p style="font-size: 16px">Loading…</p>
+      <div class="lds-dual-ring"></div>
+    </div>
+  </body>
+</html>
